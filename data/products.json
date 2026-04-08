@@ -1,0 +1,33 @@
+[
+  {
+    "id": "board-medium",
+    "name": "Graft Wild Cutting Board",
+    "subtitle": "12\" × 8\" · End-grain hardwood",
+    "price": 6500,
+    "images": ["/assets/images/products/board-medium.jpg"],
+    "description": "Hand-finished end-grain hardwood cutting board, laser engraved with the Graft Wild mark. Built for the kitchen, the camp, or the fish house. Add a name, a phrase, or leave it clean — each board ships ready to use.",
+    "sizes": [
+      { "label": "Medium — 12\" × 8\"", "priceAdjust": 0 },
+      { "label": "Large — 16\" × 10\"", "priceAdjust": 2000 }
+    ],
+    "personalization": true,
+    "personalizationPrompt": "Engraving text (optional, 40 chars max)",
+    "inStock": true,
+    "shipsIn": "5–7 business days"
+  },
+  {
+    "id": "board-round",
+    "name": "Graft Wild Round Board",
+    "subtitle": "12\" diameter · End-grain hardwood",
+    "price": 5500,
+    "images": ["/assets/images/products/board-round.jpg"],
+    "description": "Round end-grain hardwood board, laser engraved with the Graft Wild mark. Perfect for charcuterie, wild game, or everyday use. Personalize it or keep it raw.",
+    "sizes": [
+      { "label": "Standard — 12\" diameter", "priceAdjust": 0 }
+    ],
+    "personalization": true,
+    "personalizationPrompt": "Engraving text (optional, 40 chars max)",
+    "inStock": true,
+    "shipsIn": "5–7 business days"
+  }
+]

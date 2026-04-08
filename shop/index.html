@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop — Graft Wild</title>
+  <meta name="description" content="Laser engraved hardwood cutting boards. Built for the kitchen, the camp, or the fish house." />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <style>
+    /* ── Nav ─────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 2.5rem;
+      background: rgba(19,15,8,0.97);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.1rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text); text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.8rem; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-muted); transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+
+    /* ── Page header ─────────────────────────────────────── */
+    .page-header {
+      padding: 7rem 2.5rem 3rem;
+      text-align: center;
+      background: linear-gradient(to bottom, #17120a, var(--black));
+      border-bottom: 1px solid var(--border);
+    }
+    .page-header-eyebrow {
+      font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.75rem;
+    }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900; line-height: 1;
+      letter-spacing: -0.02em; color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .page-header p {
+      font-size: 0.95rem; color: var(--text-muted);
+      max-width: 480px; margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ── Product grid ────────────────────────────────────── */
+    .shop-section {
+      max-width: 1100px; margin: 0 auto;
+      padding: 4rem 2rem 6rem;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .product-card {
+      background: var(--black-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+    }
+    .product-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-3px);
+    }
+    .product-img {
+      width: 100%; aspect-ratio: 4/3;
+      object-fit: cover;
+      background: var(--black-soft);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .product-img-placeholder {
+      width: 100%; aspect-ratio: 4/3;
+      background: linear-gradient(135deg, #1c160c 0%, #241c10 50%, #1a1408 100%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .product-img-placeholder::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          transparent 0px, transparent 18px,
+          rgba(158,120,50,0.04) 18px, rgba(158,120,50,0.04) 19px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          transparent 0px, transparent 18px,
+          rgba(158,120,50,0.04) 18px, rgba(158,120,50,0.04) 19px
+        );
+    }
+    .product-img-placeholder span {
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-dim); position: relative; z-index: 1;
+    }
+    .product-info { padding: 1.5rem; }
+    .product-name {
+      font-family: var(--font-heading);
+      font-size: 1.2rem; font-weight: 700;
+      color: var(--text); margin-bottom: 0.3rem;
+    }
+    .product-subtitle {
+      font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-dim); margin-bottom: 1rem;
+    }
+    .product-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 1.25rem;
+    }
+    .product-price {
+      font-size: 1.4rem; font-weight: 700;
+      color: var(--gold-pale);
+    }
+    .product-price span {
+      font-size: 0.75rem; font-weight: 400;
+      color: var(--text-dim); margin-left: 0.25rem;
+    }
+    .btn-view {
+      padding: 0.6rem 1.25rem;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: var(--font-body);
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      border-radius: var(--radius);
+      transition: background 0.2s, color 0.2s;
+      pointer-events: none;
+    }
+    .product-card:hover .btn-view {
+      background: var(--gold); color: var(--black);
+    }
+    .out-of-stock { opacity: 0.5; pointer-events: none; }
+    .badge-oos {
+      font-size: 0.65rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--text-dim); padding: 0.25rem 0.6rem;
+      border: 1px solid var(--border); border-radius: var(--radius);
+    }
+
+    /* ── Empty / loading states ──────────────────────────── */
+    .shop-loading {
+      text-align: center; padding: 5rem 0;
+      color: var(--text-muted); font-size: 0.9rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo {
+      font-family: var(--font-heading);
+      font-size: 0.95rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    footer p {
+      font-size: 0.75rem; color: var(--text-dim);
+      letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 600px) {
+      nav { padding: 1rem 1.25rem; }
+      .nav-links { gap: 1.25rem; }
+      .page-header { padding: 6rem 1.25rem 2.5rem; }
+      .shop-section { padding: 2.5rem 1.25rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Graft Wild</a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/shop" class="active">Shop</a></li>
+    <li><a href="https://www.instagram.com/stryder.g/" target="_blank" rel="noopener">Instagram</a></li>
+    <li><a href="/cart">Cart <span id="cart-count" style="color:var(--gold)"></span></a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <p class="page-header-eyebrow">Handcrafted Goods</p>
+  <h1>The Shop</h1>
+  <p>Laser engraved hardwood cutting boards. Built for the kitchen, the camp, or the fish house. Each one ships ready to use.</p>
+</div>
+
+<main class="shop-section">
+  <div id="product-grid" class="product-grid">
+    <div class="shop-loading">Loading...</div>
+  </div>
+</main>
+
+<footer>
+  <span class="footer-logo">Graft Wild</span>
+  <p>© 2026 Graft Wild. Florida Keys.</p>
+  <p><a href="mailto:partnerships@graftwild.com" style="color:var(--text-dim)">partnerships@graftwild.com</a></p>
+</footer>
+
+<script>
+  // ── Cart badge ──────────────────────────────────────────
+  function getCart() {
+    try { return JSON.parse(localStorage.getItem('gw_cart') || '[]'); } catch { return []; }
+  }
+  function updateCartBadge() {
+    const count = getCart().reduce((s, i) => s + (i.qty || 1), 0);
+    const el = document.getElementById('cart-count');
+    el.textContent = count > 0 ? `(${count})` : '';
+  }
+  updateCartBadge();
+
+  // ── Load products ───────────────────────────────────────
+  function formatPrice(cents) {
+    return '$' + (cents / 100).toFixed(0);
+  }
+
+  async function loadProducts() {
+    const grid = document.getElementById('product-grid');
+    try {
+      const res = await fetch('/api/products');
+      const products = await res.json();
+
+      if (!products.length) {
+        grid.innerHTML = '<div class="shop-loading">No products available yet.</div>';
+        return;
+      }
+
+      grid.innerHTML = products.map(p => {
+        const basePrice = formatPrice(p.price);
+        const hasMoreSizes = p.sizes && p.sizes.length > 1;
+        const priceDisplay = hasMoreSizes ? `From ${basePrice}` : basePrice;
+        const imgEl = p.images && p.images[0] && p.images[0] !== '/assets/images/products/board-medium.jpg' && p.images[0] !== '/assets/images/products/board-round.jpg'
+          ? `<img class="product-img" src="${p.images[0]}" alt="${p.name}" loading="lazy" />`
+          : `<div class="product-img-placeholder"><span>Photo Coming Soon</span></div>`;
+
+        return `
+          <a class="product-card${p.inStock ? '' : ' out-of-stock'}" href="/product?id=${p.id}">
+            ${imgEl}
+            <div class="product-info">
+              <div class="product-name">${p.name}</div>
+              <div class="product-subtitle">${p.subtitle}</div>
+              <div class="product-footer">
+                <div class="product-price">
+                  ${priceDisplay}
+                  ${hasMoreSizes ? '' : '<span>+ free engraving</span>'}
+                </div>
+                ${p.inStock
+                  ? '<div class="btn-view">View Board</div>'
+                  : '<span class="badge-oos">Out of Stock</span>'}
+              </div>
+            </div>
+          </a>`;
+      }).join('');
+
+    } catch (e) {
+      grid.innerHTML = '<div class="shop-loading">Unable to load products. Please try again.</div>';
+    }
+  }
+
+  loadProducts();
+</script>
+</body>
+</html>

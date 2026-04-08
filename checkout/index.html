@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — Graft Wild</title>
+  <link rel="stylesheet" href="/assets/style.css" />
+  <style>
+    /* ── Nav ─────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 2.5rem;
+      background: rgba(19,15,8,0.97);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.1rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text); text-decoration: none;
+    }
+    .nav-secure {
+      font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* ── Page layout ─────────────────────────────────────── */
+    .checkout-page {
+      max-width: 1000px; margin: 0 auto;
+      padding: 6.5rem 2rem 6rem;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 3.5rem;
+      align-items: start;
+    }
+
+    /* ── Section headings ────────────────────────────────── */
+    .section-title {
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1.25rem;
+    }
+
+    /* ── Form ────────────────────────────────────────────── */
+    .form-section { margin-bottom: 2.25rem; }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .form-row.full { grid-template-columns: 1fr; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.75rem; }
+    .form-group label {
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .form-input {
+      padding: 0.75rem 1rem;
+      background: var(--black-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font-body); font-size: 0.9rem;
+      outline: none; transition: border-color 0.2s;
+      width: 100%; box-sizing: border-box;
+    }
+    .form-input:focus { border-color: var(--gold); }
+    .form-input.error { border-color: #c85a2a; }
+
+    /* ── Stripe card element container ───────────────────── */
+    .stripe-wrap {
+      padding: 0.85rem 1rem;
+      background: var(--black-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: border-color 0.2s;
+    }
+    .stripe-wrap.focused { border-color: var(--gold); }
+    #stripe-error {
+      margin-top: 0.6rem;
+      font-size: 0.78rem; color: #c85a2a;
+      min-height: 1.2em;
+    }
+
+    /* ── Divider ─────────────────────────────────────────── */
+    .form-divider {
+      border: none; border-top: 1px solid var(--border);
+      margin: 1.75rem 0;
+    }
+
+    /* ── Submit button ───────────────────────────────────── */
+    .btn-place-order {
+      width: 100%; padding: 1.1rem;
+      background: var(--gold); color: var(--black);
+      border: none; border-radius: var(--radius);
+      font-family: var(--font-body);
+      font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      cursor: pointer; transition: background 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    }
+    .btn-place-order:hover:not(:disabled) { background: var(--gold-light); }
+    .btn-place-order:disabled { opacity: 0.5; cursor: default; }
+    .spinner {
+      width: 1rem; height: 1rem;
+      border: 2px solid rgba(19,15,8,0.3);
+      border-top-color: var(--black);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .submit-error {
+      margin-top: 0.75rem; font-size: 0.8rem;
+      color: #c85a2a; text-align: center; min-height: 1.2em;
+    }
+    .secure-note {
+      text-align: center; margin-top: 0.75rem;
+      font-size: 0.7rem; color: var(--text-dim);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Order summary sidebar ───────────────────────────── */
+    .order-summary {
+      background: var(--black-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      position: sticky; top: 5.5rem;
+    }
+    .summary-items { margin-bottom: 1.25rem; }
+    .summary-item {
+      display: flex; justify-content: space-between;
+      align-items: flex-start; gap: 1rem;
+      padding: 0.85rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .summary-item:last-child { border-bottom: none; }
+    .summary-item-info { flex: 1; min-width: 0; }
+    .summary-item-name {
+      font-size: 0.85rem; font-weight: 600;
+      color: var(--text); margin-bottom: 0.2rem;
+    }
+    .summary-item-meta {
+      font-size: 0.7rem; color: var(--text-dim);
+      line-height: 1.5;
+    }
+    .summary-item-engraving {
+      font-size: 0.68rem; color: var(--gold);
+    }
+    .summary-item-price {
+      font-size: 0.9rem; font-weight: 600;
+      color: var(--gold-pale); flex-shrink: 0;
+    }
+    .summary-totals { margin-top: 0.5rem; }
+    .summary-row {
+      display: flex; justify-content: space-between;
+      font-size: 0.82rem; color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+    .summary-row.total {
+      font-size: 1rem; font-weight: 700;
+      color: var(--text); margin-top: 0.75rem;
+      padding-top: 0.75rem; border-top: 1px solid var(--border);
+    }
+    .empty-cart-msg {
+      padding: 4rem 2rem; text-align: center;
+      color: var(--text-muted); grid-column: 1/-1;
+    }
+    .empty-cart-msg a { color: var(--gold); }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo {
+      font-family: var(--font-heading); font-size: 0.95rem;
+      font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    footer p { font-size: 0.75rem; color: var(--text-dim); }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.25rem; }
+      .checkout-page { grid-template-columns: 1fr; gap: 2rem; padding: 5.5rem 1.25rem 4rem; }
+      .order-summary { position: static; order: -1; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Graft Wild</a>
+  <span class="nav-secure">🔒 Secure Checkout</span>
+</nav>
+
+<div id="checkout-page" class="checkout-page">
+  <div class="empty-cart-msg">Loading...</div>
+</div>
+
+<footer>
+  <span class="footer-logo">Graft Wild</span>
+  <p>© 2026 Graft Wild. Florida Keys.</p>
+  <p>Payments secured by Stripe</p>
+</footer>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  // ── Helpers ─────────────────────────────────────────────
+  function getCart() {
+    try { return JSON.parse(localStorage.getItem('gw_cart') || '[]'); } catch { return []; }
+  }
+  function formatPrice(cents) { return '$' + (cents / 100).toFixed(2); }
+
+  const cart = getCart();
+
+  // ── Empty cart guard ─────────────────────────────────────
+  if (!cart.length) {
+    document.getElementById('checkout-page').innerHTML = `
+      <div class="empty-cart-msg">
+        <p>Your cart is empty. <a href="/shop">Back to shop →</a></p>
+      </div>`;
+  } else {
+    buildCheckout();
+  }
+
+  async function buildCheckout() {
+    const subtotal = cart.reduce((s, i) => s + i.price * (i.qty || 1), 0);
+
+    // ── Order summary HTML ─────────────────────────────────
+    const summaryItemsHtml = cart.map(item => `
+      <div class="summary-item">
+        <div class="summary-item-info">
+          <div class="summary-item-name">${item.name} × ${item.qty || 1}</div>
+          <div class="summary-item-meta">${item.size || ''}</div>
+          ${item.engraving ? `<div class="summary-item-engraving">✦ "${item.engraving}"</div>` : ''}
+        </div>
+        <div class="summary-item-price">${formatPrice(item.price * (item.qty || 1))}</div>
+      </div>`).join('');
+
+    // ── Render full page ───────────────────────────────────
+    document.getElementById('checkout-page').innerHTML = `
+      <div class="checkout-form">
+        <div class="form-section">
+          <div class="section-title">Contact</div>
+          <div class="form-group">
+            <label for="cust-email">Email</label>
+            <input id="cust-email" class="form-input" type="email" placeholder="you@email.com" autocomplete="email" />
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-title">Shipping Address</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cust-first">First Name</label>
+              <input id="cust-first" class="form-input" type="text" autocomplete="given-name" />
+            </div>
+            <div class="form-group">
+              <label for="cust-last">Last Name</label>
+              <input id="cust-last" class="form-input" type="text" autocomplete="family-name" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="cust-addr1">Address</label>
+            <input id="cust-addr1" class="form-input" type="text" placeholder="123 Main St" autocomplete="address-line1" />
+          </div>
+          <div class="form-group">
+            <label for="cust-addr2">Apt, suite, etc. (optional)</label>
+            <input id="cust-addr2" class="form-input" type="text" autocomplete="address-line2" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cust-city">City</label>
+              <input id="cust-city" class="form-input" type="text" autocomplete="address-level2" />
+            </div>
+            <div class="form-group">
+              <label for="cust-state">State</label>
+              <input id="cust-state" class="form-input" type="text" maxlength="2" placeholder="FL" autocomplete="address-level1" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cust-zip">ZIP Code</label>
+              <input id="cust-zip" class="form-input" type="text" maxlength="10" autocomplete="postal-code" />
+            </div>
+            <div class="form-group">
+              <label for="cust-country">Country</label>
+              <input id="cust-country" class="form-input" type="text" value="US" autocomplete="country" />
+            </div>
+          </div>
+        </div>
+
+        <hr class="form-divider" />
+
+        <div class="form-section">
+          <div class="section-title">Payment</div>
+          <div class="stripe-wrap" id="stripe-wrap">
+            <div id="card-element"></div>
+          </div>
+          <div id="stripe-error"></div>
+        </div>
+
+        <button class="btn-place-order" id="btn-place-order">
+          <div class="spinner" id="spinner"></div>
+          <span id="btn-label">Place Order — ${formatPrice(subtotal)}</span>
+        </button>
+        <div class="submit-error" id="submit-error"></div>
+        <p class="secure-note">Your payment is encrypted and secured by Stripe. We never see your card number.</p>
+      </div>
+
+      <div class="order-summary">
+        <div class="section-title">Your Order</div>
+        <div class="summary-items">${summaryItemsHtml}</div>
+        <div class="summary-totals">
+          <div class="summary-row"><span>Subtotal</span><span>${formatPrice(subtotal)}</span></div>
+          <div class="summary-row"><span>Shipping</span><span>TBD</span></div>
+          <div class="summary-row total"><span>Total</span><span>${formatPrice(subtotal)}</span></div>
+        </div>
+      </div>`;
+
+    // ── Init Stripe ────────────────────────────────────────
+    let publishableKey;
+    try {
+      // Get publishable key + clientSecret from server
+      const intentRes = await fetch('/api/create-payment-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: cart.map(i => ({
+            productId: i.productId,
+            qty: i.qty || 1,
+            sizeIndex: i.sizeIndex ?? 0,
+            engraving: i.engraving || '',
+          })),
+          customer: { name: '', email: '' },
+        }),
+      });
+
+      const intentData = await intentRes.json();
+      if (!intentRes.ok) throw new Error(intentData.error || 'Server error');
+
+      publishableKey = intentData.publishableKey;
+      const clientSecret = intentData.clientSecret;
+
+      const stripe = Stripe(publishableKey);
+      const elements = stripe.elements();
+
+      const cardElement = elements.create('card', {
+        style: {
+          base: {
+            color: '#ede8d8',
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '15px',
+            fontSmoothing: 'antialiased',
+            '::placeholder': { color: '#6a5c48' },
+            iconColor: '#9e7832',
+          },
+          invalid: { color: '#c85a2a', iconColor: '#c85a2a' },
+        },
+      });
+
+      cardElement.mount('#card-element');
+
+      cardElement.on('focus', () => document.getElementById('stripe-wrap').classList.add('focused'));
+      cardElement.on('blur',  () => document.getElementById('stripe-wrap').classList.remove('focused'));
+      cardElement.on('change', e => {
+        document.getElementById('stripe-error').textContent = e.error ? e.error.message : '';
+      });
+
+      // ── Submit ─────────────────────────────────────────────
+      document.getElementById('btn-place-order').addEventListener('click', async () => {
+        const btn     = document.getElementById('btn-place-order');
+        const spinner = document.getElementById('spinner');
+        const label   = document.getElementById('btn-label');
+        const errEl   = document.getElementById('submit-error');
+
+        // Basic validation
+        const email  = document.getElementById('cust-email').value.trim();
+        const first  = document.getElementById('cust-first').value.trim();
+        const last   = document.getElementById('cust-last').value.trim();
+        const addr1  = document.getElementById('cust-addr1').value.trim();
+        const city   = document.getElementById('cust-city').value.trim();
+        const state  = document.getElementById('cust-state').value.trim();
+        const zip    = document.getElementById('cust-zip').value.trim();
+
+        if (!email || !first || !last || !addr1 || !city || !state || !zip) {
+          errEl.textContent = 'Please fill in all required fields.';
+          return;
+        }
+
+        btn.disabled = true;
+        spinner.style.display = 'block';
+        label.textContent = 'Processing...';
+        errEl.textContent = '';
+
+        const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+          payment_method: {
+            card: cardElement,
+            billing_details: {
+              name:  `${first} ${last}`,
+              email,
+              address: {
+                line1:       addr1,
+                line2:       document.getElementById('cust-addr2').value.trim(),
+                city,
+                state,
+                postal_code: zip,
+                country:     document.getElementById('cust-country').value.trim() || 'US',
+              },
+            },
+          },
+          receipt_email: email,
+        });
+
+        if (error) {
+          errEl.textContent = error.message;
+          btn.disabled = false;
+          spinner.style.display = 'none';
+          label.textContent = `Place Order — ${formatPrice(subtotal)}`;
+        } else if (paymentIntent.status === 'succeeded') {
+          // Store name/email for success page, clear cart
+          localStorage.setItem('gw_last_order', JSON.stringify({
+            name:  `${first} ${last}`,
+            email,
+            total: subtotal,
+            items: cart,
+          }));
+          localStorage.removeItem('gw_cart');
+          window.location.href = '/order-success';
+        }
+      });
+
+    } catch (e) {
+      document.getElementById('submit-error').textContent =
+        'Unable to load payment form: ' + e.message;
+      document.getElementById('btn-place-order').disabled = true;
+    }
+  }
+</script>
+</body>
+</html>

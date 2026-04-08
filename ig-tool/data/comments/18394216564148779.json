@@ -1,0 +1,279 @@
+[
+  {
+    "id": "18079185524625432",
+    "text": "@love_august1993 They’re friends",
+    "timestamp": "2026-04-02T03:14:45+0000",
+    "username": "stryder.g",
+    "like_count": 1
+  },
+  {
+    "id": "18022603019818587",
+    "text": "@engineerleisure Florida !",
+    "timestamp": "2026-04-02T03:14:22+0000",
+    "username": "stryder.g",
+    "like_count": 0
+  },
+  {
+    "id": "18115026946678796",
+    "text": "@madison_glam That’s Florida for ya !",
+    "timestamp": "2026-04-02T03:13:10+0000",
+    "username": "stryder.g",
+    "like_count": 0
+  },
+  {
+    "id": "18134625904523590",
+    "text": "Crocodiles 😢",
+    "timestamp": "2026-04-02T03:11:52+0000",
+    "like_count": 1,
+    "replies": {
+      "data": [
+        {
+          "id": "18115026946678796",
+          "text": "@madison_glam That’s Florida for ya !",
+          "timestamp": "2026-04-02T03:13:10+0000"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "QVFIU3ZATZAlhhX3h3NWVIekE4ZA0pOYnB0N1BqTU9FREFER1dnZA1ZA6bV92TDJsZAVNXX0pQRGNDYWxYUHRKYjlRNnFkSDZAPV1JsU3M1aU5xSGQyWHBLWG04V1pB",
+          "after": "QVFIU3ZATZAlhhX3h3NWVIekE4ZA0pOYnB0N1BqTU9FREFER1dnZA1ZA6bV92TDJsZAVNXX0pQRGNDYWxYUHRKYjlRNnFkSDZAPV1JsU3M1aU5xSGQyWHBLWG04V1pB"
+        }
+      }
+    }
+  },
+  {
+    "id": "18088262275977469",
+    "text": "Buaya 😮😮😮😮",
+    "timestamp": "2026-03-28T09:50:53+0000",
+    "like_count": 0
+  },
+  {
+    "id": "17880461751489395",
+    "text": "Good luck for today! Wishing you the best marathone in my beloved city 👍🏻",
+    "timestamp": "2026-03-22T14:19:39+0000",
+    "like_count": 1
+  },
+  {
+    "id": "17986876016790954",
+    "text": "You swim there? How about the the🐊?",
+    "timestamp": "2026-03-20T08:30:34+0000",
+    "like_count": 4,
+    "replies": {
+      "data": [
+        {
+          "id": "18079185524625432",
+          "text": "@love_august1993 They’re friends",
+          "timestamp": "2026-04-02T03:14:45+0000"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "QVFIU3BlbmZA2UXhUZAWtGX3oxbEN2OXRrOVJDWjF6NTV4U2FxeGQtdDZASQjhkU1BQcE12ei1tbXRtSmpHMTRVT2kwcUpCUHZAxU0pseURvMl9kRVhMQkJJQ0ZAn",
+          "after": "QVFIU3BlbmZA2UXhUZAWtGX3oxbEN2OXRrOVJDWjF6NTV4U2FxeGQtdDZASQjhkU1BQcE12ei1tbXRtSmpHMTRVT2kwcUpCUHZAxU0pseURvMl9kRVhMQkJJQ0ZAn"
+        }
+      }
+    }
+  },
+  {
+    "id": "18058227605476974",
+    "text": "U could not pay me to jump in that croc 🐊 infested water 😂",
+    "timestamp": "2026-03-16T05:21:57+0000",
+    "like_count": 6
+  },
+  {
+    "id": "18204462859334061",
+    "text": "You're so Handsome 😍❤️ .",
+    "timestamp": "2026-03-15T15:01:49+0000",
+    "like_count": 1
+  },
+  {
+    "id": "17973840477007301",
+    "text": "Это та же вода, где крокодил?",
+    "timestamp": "2026-03-14T18:20:02+0000",
+    "like_count": 3
+  },
+  {
+    "id": "17930451978216162",
+    "text": "😍😍😍 love this lifestyle",
+    "timestamp": "2026-03-14T15:57:32+0000",
+    "like_count": 1
+  },
+  {
+    "id": "17956500612083906",
+    "text": "Nice eggs",
+    "timestamp": "2026-03-14T00:53:12+0000",
+    "like_count": 1
+  },
+  {
+    "id": "17944247447981595",
+    "text": "Bro how old are you?",
+    "timestamp": "2026-02-22T07:51:41+0000",
+    "like_count": 1
+  },
+  {
+    "id": "18093006575074148",
+    "text": "No crocs in dem waters?!!😱",
+    "timestamp": "2026-02-20T00:14:10+0000",
+    "like_count": 10
+  },
+  {
+    "id": "17911495122316570",
+    "text": "where are you based?",
+    "timestamp": "2026-02-17T01:46:16+0000",
+    "like_count": 1,
+    "replies": {
+      "data": [
+        {
+          "id": "18022603019818587",
+          "text": "@engineerleisure Florida !",
+          "timestamp": "2026-04-02T03:14:22+0000"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "QVFIU1VFOVhCczAyZATF3WWdVMG9zSHFiQ1lJaTBnSENCTmoyM0ZAxV3JKbkpta0pib1BJVXRQOGhacVpveDFHVmNzelRiaDVTMG5wNWpXUHhDWWl2ZAm1KbzVR",
+          "after": "QVFIU1VFOVhCczAyZATF3WWdVMG9zSHFiQ1lJaTBnSENCTmoyM0ZAxV3JKbkpta0pib1BJVXRQOGhacVpveDFHVmNzelRiaDVTMG5wNWpXUHhDWWl2ZAm1KbzVR"
+        }
+      }
+    }
+  },
+  {
+    "id": "17880229842466668",
+    "text": "Yyyup",
+    "timestamp": "2026-02-14T07:33:23+0000",
+    "like_count": 1
+  },
+  {
+    "id": "17954092587075735",
+    "text": "That’s class",
+    "timestamp": "2026-02-13T21:40:27+0000",
+    "like_count": 1
+  },
+  {
+    "id": "18011429312672602",
+    "text": "that’s my coworker",
+    "timestamp": "2026-02-13T20:58:38+0000",
+    "like_count": 1
+  },
+  {
+    "id": "17877836064476941",
+    "text": "Whatta beaut",
+    "timestamp": "2026-02-13T20:12:35+0000",
+    "like_count": 1
+  },
+  {
+    "id": "18022769516801158",
+    "text": "LETS GOOOOO",
+    "timestamp": "2026-02-13T20:12:30+0000",
+    "like_count": 1
+  },
+  {
+    "id": "17895729528402286",
+    "text": "The moan at the end is my favorite part",
+    "timestamp": "2026-02-13T20:09:18+0000",
+    "like_count": 5
+  },
+  {
+    "id": "18097565962933021",
+    "text": "@leomayii sit boy",
+    "timestamp": "2026-02-13T20:07:49+0000",
+    "username": "stryder.g",
+    "like_count": 0
+  },
+  {
+    "id": "17901712317377662",
+    "text": "@sahara_deserttt very much so",
+    "timestamp": "2026-02-13T20:07:36+0000",
+    "username": "stryder.g",
+    "like_count": 0
+  },
+  {
+    "id": "18557808997044933",
+    "text": "@leomayii stay there",
+    "timestamp": "2026-02-13T19:59:10+0000",
+    "like_count": 1
+  },
+  {
+    "id": "18076798523621608",
+    "text": "Catch me if you can",
+    "timestamp": "2026-02-13T19:58:46+0000",
+    "like_count": 1
+  },
+  {
+    "id": "18115219222622162",
+    "text": "does that hurt",
+    "timestamp": "2026-02-13T19:58:38+0000",
+    "like_count": 1,
+    "replies": {
+      "data": [
+        {
+          "id": "17901712317377662",
+          "text": "@sahara_deserttt very much so",
+          "timestamp": "2026-02-13T20:07:36+0000"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "QVFIU2o0LTI2dXBXdjdKYVVZAVGhWcU1va0s2Nk9lS0dFeHBoOTNzZAVZAEdXRqRS1pWEU2cGxURlN4VVRfRFZAwRlc2ZAE9abGt6b2E5LUVzdFRlSjZAtZADZAhZAlpR",
+          "after": "QVFIU2o0LTI2dXBXdjdKYVVZAVGhWcU1va0s2Nk9lS0dFeHBoOTNzZAVZAEdXRqRS1pWEU2cGxURlN4VVRfRFZAwRlc2ZAE9abGt6b2E5LUVzdFRlSjZAtZADZAhZAlpR"
+        }
+      }
+    }
+  },
+  {
+    "id": "18058911194348661",
+    "text": "👏",
+    "timestamp": "2026-02-13T19:57:36+0000",
+    "like_count": 2
+  },
+  {
+    "id": "17899145850388070",
+    "text": "Fine I’ll get off the couch",
+    "timestamp": "2026-02-13T19:57:13+0000",
+    "like_count": 1,
+    "replies": {
+      "data": [
+        {
+          "id": "18097565962933021",
+          "text": "@leomayii sit boy",
+          "timestamp": "2026-02-13T20:07:49+0000"
+        },
+        {
+          "id": "18557808997044933",
+          "text": "@leomayii stay there",
+          "timestamp": "2026-02-13T19:59:10+0000"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "QVFIU3dLZA2ZAzU3J3NWYwdFFKQVJudnpMbW9LaTVpUF9qaThyVE0zb042RUFaYmxDWFlQbXQ2S3dNMEZA0TWFKQ3ljNDQ4d2QyTFhMYm1WY3JfeUEwVGFzaGx3",
+          "after": "QVFIU0hvdEpuVENhenRBODRPWm8yQkNKTjVJQWJVZAUt1a0M0cG1IMFhxMEl2YUt1b2NQdU1jdi1PZAFMza2NRM3V3SDRqUEFuWGQtRFJxaU82MUtKc2RWWWdn"
+        }
+      }
+    }
+  },
+  {
+    "id": "18107014387759429",
+    "text": "🔥🔥",
+    "timestamp": "2026-02-13T19:56:26+0000",
+    "like_count": 1
+  },
+  {
+    "id": "18126474340554149",
+    "text": "Here for ALL of it!!! \nLet’s goooo @stryder.g !!!",
+    "timestamp": "2026-02-13T19:53:04+0000",
+    "like_count": 1
+  },
+  {
+    "id": "18082672343521571",
+    "text": "Jock 💪🏽",
+    "timestamp": "2026-02-13T19:49:36+0000",
+    "like_count": 1
+  },
+  {
+    "id": "17852671140625220",
+    "text": "🔥🔥",
+    "timestamp": "2026-02-13T19:44:24+0000",
+    "like_count": 1
+  }
+]

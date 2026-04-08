@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Confirmed — Graft Wild</title>
+  <link rel="stylesheet" href="/assets/style.css" />
+  <style>
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 2.5rem;
+      background: rgba(19,15,8,0.97);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.1rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text); text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.8rem; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-muted); transition: color 0.2s; text-decoration: none;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    .success-page {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 7rem 2rem 4rem;
+    }
+    .success-box {
+      max-width: 560px; width: 100%;
+      background: var(--black-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 3rem 2.5rem;
+      text-align: center;
+    }
+    .success-mark {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: rgba(158,120,50,0.12);
+      border: 1px solid rgba(158,120,50,0.3);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 1.5rem;
+    }
+    .success-eyebrow {
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.5rem;
+    }
+    .success-box h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 900; color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+    .success-sub {
+      font-size: 0.9rem; color: var(--text-muted);
+      line-height: 1.7; margin-bottom: 2rem;
+    }
+
+    /* Order summary */
+    .order-summary {
+      background: var(--black-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      text-align: left;
+      margin-bottom: 2rem;
+    }
+    .summary-label {
+      font-size: 0.65rem; font-weight: 600;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-dim); margin-bottom: 1rem;
+    }
+    .order-item {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-size: 0.85rem; color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+    .order-item-name { color: var(--text); font-weight: 500; }
+    .order-item-engraving {
+      font-size: 0.72rem; color: var(--gold);
+      display: block; margin-top: 0.15rem;
+    }
+    .order-divider {
+      border: none; border-top: 1px solid var(--border);
+      margin: 1rem 0;
+    }
+    .order-total {
+      display: flex; justify-content: space-between;
+      font-size: 1rem; font-weight: 700; color: var(--text);
+    }
+
+    .ship-note {
+      font-size: 0.78rem; color: var(--text-dim);
+      line-height: 1.6; margin-bottom: 2rem;
+      padding: 0.85rem 1rem;
+      background: rgba(158,120,50,0.06);
+      border: 1px solid rgba(158,120,50,0.15);
+      border-radius: var(--radius);
+    }
+
+    .btn-shop {
+      display: inline-block;
+      padding: 0.85rem 2.5rem;
+      background: var(--gold);
+      color: var(--black);
+      border-radius: var(--radius);
+      font-family: var(--font-body);
+      font-size: 0.8rem; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-shop:hover { background: var(--gold-light); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo {
+      font-family: var(--font-heading); font-size: 0.95rem;
+      font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    footer p { font-size: 0.75rem; color: var(--text-dim); }
+
+    @media (max-width: 600px) {
+      nav { padding: 1rem 1.25rem; }
+      .nav-links { gap: 1.25rem; }
+      .success-box { padding: 2rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Graft Wild</a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/shop">Shop</a></li>
+    <li><a href="https://www.instagram.com/stryder.g/" target="_blank" rel="noopener">Instagram</a></li>
+    <li><a href="/cart">Cart</a></li>
+  </ul>
+</nav>
+
+<div class="success-page">
+  <div class="success-box" id="success-box">
+    <div class="success-mark">✦</div>
+    <p class="success-eyebrow">Order Confirmed</p>
+    <h1 id="success-heading">Thank you!</h1>
+    <p class="success-sub" id="success-sub">
+      Your order has been received. We'll get to work on it right away.
+    </p>
+
+    <div class="order-summary" id="order-summary" style="display:none">
+      <div class="summary-label">Your Order</div>
+      <div id="order-items"></div>
+      <hr class="order-divider" />
+      <div class="order-total">
+        <span>Total Paid</span>
+        <span id="order-total">—</span>
+      </div>
+    </div>
+
+    <div class="ship-note">
+      Each board is made to order and ships within <strong>5–7 business days</strong>.
+      You'll receive a shipping confirmation email when it's on the way.
+    </div>
+
+    <a class="btn-shop" href="/shop">Back to the Shop</a>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-logo">Graft Wild</span>
+  <p>© 2026 Graft Wild. Florida Keys.</p>
+  <p><a href="mailto:partnerships@graftwild.com" style="color:var(--text-dim)">partnerships@graftwild.com</a></p>
+</footer>
+
+<script>
+  function formatPrice(cents) { return '$' + (cents / 100).toFixed(2); }
+
+  const order = (() => {
+    try { return JSON.parse(localStorage.getItem('gw_last_order') || 'null'); } catch { return null; }
+  })();
+
+  if (order) {
+    if (order.name) {
+      document.getElementById('success-heading').textContent = `Thank you, ${order.name.split(' ')[0]}!`;
+    }
+    if (order.email) {
+      document.getElementById('success-sub').textContent =
+        `Your order has been received. A confirmation will be sent to ${order.email}.`;
+    }
+
+    const itemsEl = document.getElementById('order-items');
+    if (order.items && order.items.length) {
+      itemsEl.innerHTML = order.items.map(item => `
+        <div class="order-item">
+          <div>
+            <span class="order-item-name">${item.name}${item.qty > 1 ? ' × ' + item.qty : ''}</span>
+            ${item.size ? `<span class="order-item-engraving">${item.size}</span>` : ''}
+            ${item.engraving ? `<span class="order-item-engraving">✦ "${item.engraving}"</span>` : ''}
+          </div>
+          <span>${formatPrice(item.price * (item.qty || 1))}</span>
+        </div>`).join('');
+    }
+
+    if (order.total) {
+      document.getElementById('order-total').textContent = formatPrice(order.total);
+    }
+    document.getElementById('order-summary').style.display = 'block';
+
+    // Clear after displaying
+    localStorage.removeItem('gw_last_order');
+  }
+</script>
+</body>
+</html>

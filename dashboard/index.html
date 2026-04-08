@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graft Wild — Dashboard</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script>if(localStorage.getItem('gw_unlocked')){document.documentElement.style.setProperty('--gate-display','none');document.documentElement.style.setProperty('--app-display','flex');}</script>
+  <style>
+    /* ── Password Gate ───────────────────────────────────── */
+    #gate {
+      position: fixed; inset: 0; z-index: 999;
+      background: var(--black);
+      display: var(--gate-display, flex); align-items: center; justify-content: center;
+    }
+    .gate-box {
+      width: 100%; max-width: 380px;
+      padding: 2.5rem;
+      background: var(--black-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      text-align: center;
+    }
+    .gate-logo {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+    .gate-sub {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2rem;
+    }
+    .gate-box input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--black-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      text-align: center;
+      letter-spacing: 0.15em;
+      outline: none;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s;
+    }
+    .gate-box input:focus { border-color: var(--gold); }
+    .gate-box button {
+      width: 100%;
+      padding: 0.8rem;
+      background: var(--gold);
+      color: var(--black);
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .gate-box button:hover { background: var(--gold-light); }
+    .gate-error {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: #c85a2a;
+      min-height: 1.2em;
+    }
+
+    /* ── App shell ───────────────────────────────────────── */
+    #app { display: var(--app-display, none); min-height: 100vh; flex-direction: column; }
+
+    /* ── Header ──────────────────────────────────────────── */
+    .dash-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+      background: var(--black-soft);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 50;
+    }
+    .dash-logo {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+    .dash-logo span { color: var(--gold); }
+    .dash-meta {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+    }
+    .dash-logout {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.35rem 0.75rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      font-family: var(--font-body);
+    }
+    .dash-logout:hover { color: var(--text); border-color: var(--text-dim); }
+
+    /* ── Tabs ────────────────────────────────────────────── */
+    .tabs {
+      display: flex; gap: 0;
+      background: var(--black-soft);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 0.85rem 1.5rem;
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .tab-btn:hover { color: var(--text-muted); }
+    .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+    /* ── Tab panels ──────────────────────────────────────── */
+    .tab-panel { display: none; padding: 2rem; }
+    .tab-panel.active { display: block; }
+
+    /* ── Stat cards ──────────────────────────────────────── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--black-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+    }
+    .stat-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 0.5rem;
+    }
+    .stat-value {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 0.35rem;
+    }
+    .stat-trend {
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .stat-trend.up   { color: var(--green-light); }
+    .stat-trend.down { color: #c85a2a; }
+    .stat-trend.flat { color: var(--text-dim); }
+
+    /* ── Profile header ──────────────────────────────────── */
+    .profile-bar {
+      display: flex; align-items: center; gap: 1.25rem;
+      background: var(--black-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .profile-pic {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      object-fit: cover;
+      flex-shrink: 0;
+      background: var(--green-dark);
+    }
+    .profile-info h2 {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.15rem;
+    }
+    .profile-info p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .profile-stats {
+      display: flex; gap: 2rem;
+      margin-left: auto;
+    }
+    .profile-stat { text-align: center; }
+    .profile-stat strong {
+      display: block;
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .profile-stat span {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* ── Chart ───────────────────────────────────────────── */
+    .chart-section {
+      background: var(--black-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .chart-title {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    #reach-chart {
+      width: 100%; height: 160px;
+      display: block;
+    }
+
+    /* ── Section headers ─────────────────────────────────── */
+    .section-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .section-hdr h3 {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ── Post grid ───────────────────────────────────────── */
+    .post-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .post-thumb {
+      background: var(--black-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .post-thumb:hover { border-color: var(--gold); }
+    .post-thumb-img {
+      width: 100%; aspect-ratio: 1;
+      object-fit: cover;
+      background: var(--green-dark);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+    }
+    .post-thumb-img img { width: 100%; height: 100%; object-fit: cover; }
+    .post-thumb-body { padding: 0.6rem 0.75rem; }
+    .post-type-badge {
+      display: inline-block;
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.4rem;
+      border-radius: 3px;
+      margin-bottom: 0.4rem;
+    }
+    .badge-reel     { background: rgba(90,153,84,0.15); color: var(--green-light); border: 1px solid rgba(90,153,84,0.3); }
+    .badge-image    { background: rgba(200,146,42,0.12); color: var(--gold); border: 1px solid rgba(200,146,42,0.25); }
+    .badge-carousel { background: rgba(100,100,200,0.12); color: #8888ee; border: 1px solid rgba(100,100,200,0.25); }
+    .post-stat-row {
+      display: flex; gap: 0.75rem;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+    .post-stat-row span { display: flex; align-items: center; gap: 0.2rem; }
+
+    /* ── Top posts table ─────────────────────────────────── */
+    .top-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-bottom: 2rem;
+    }
+    .top-table th {
+      text-align: left;
+      padding: 0.6rem 0.75rem;
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+    }
+    .top-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid rgba(60,46,26,0.6);
+      color: var(--text-muted);
+      vertical-align: middle;
+    }
+    .top-table tr:last-child td { border-bottom: none; }
+    .top-table tr:hover td { background: var(--black-card); }
+    .top-table .caption-cell {
+      max-width: 280px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--text);
+    }
+    .top-table a { color: var(--text-dim); font-size: 0.7rem; }
+    .top-table a:hover { color: var(--gold); }
+
+    /* ── Kanban ──────────────────────────────────────────── */
+    .kanban {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      align-items: start;
+    }
+    .kanban-col {
+      background: var(--black-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .kanban-col-header {
+      padding: 0.8rem 1rem;
+      background: rgba(0,0,0,0.2);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .kanban-col-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .kanban-count {
+      font-size: 0.65rem;
+      background: var(--border);
+      color: var(--text-dim);
+      border-radius: 10px;
+      padding: 0.1rem 0.5rem;
+    }
+    .kanban-cards { padding: 0.75rem; display: flex; flex-direction: column; gap: 0.6rem; min-height: 80px; }
+    .idea-card {
+      background: var(--black-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.85rem;
+      transition: border-color 0.2s;
+    }
+    .idea-card:hover { border-color: var(--text-dim); }
+    .idea-card-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
+    .idea-card-type {
+      display: inline-block;
+      font-size: 0.58rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+    .idea-card-notes {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+      margin-bottom: 0.6rem;
+    }
+    .idea-card-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .btn-move {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.5rem;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-move:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-delete {
+      font-size: 0.6rem;
+      padding: 0.2rem 0.5rem;
+      background: none;
+      border: 1px solid transparent;
+      border-radius: 3px;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-family: var(--font-body);
+      margin-left: auto;
+      transition: color 0.15s;
+    }
+    .btn-delete:hover { color: #c85a2a; }
+
+    /* Add idea form */
+    .add-idea-form {
+      display: flex; gap: 0.75rem; flex-wrap: wrap;
+      background: var(--black-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      align-items: flex-end;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
+    .form-group label {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background: var(--black-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      padding: 0.55rem 0.75rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--gold); }
+    .form-group select option { background: var(--black-soft); }
+    .form-group textarea { resize: vertical; min-height: 60px; }
+    .fg-title { flex: 2; min-width: 160px; }
+    .fg-type  { min-width: 120px; }
+    .fg-notes { flex: 3; min-width: 200px; }
+    .btn-add {
+      padding: 0.55rem 1.25rem;
+      background: var(--gold);
+      color: var(--black);
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+      align-self: flex-end;
+    }
+    .btn-add:hover { background: var(--gold-light); }
+    .btn-danger {
+      padding: 0.55rem 1rem;
+      background: none;
+      color: #c85a2a;
+      border: 1px solid rgba(200,90,42,0.3);
+      border-radius: var(--radius);
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-danger:hover { background: rgba(200,90,42,0.1); border-color: #c85a2a; }
+
+    /* ── Deals table ─────────────────────────────────────── */
+    .deals-table-wrap { overflow-x: auto; }
+    .deals-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .deals-table th {
+      text-align: left;
+      padding: 0.7rem 1rem;
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      background: var(--black-soft);
+    }
+    .deals-table td {
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid rgba(60,46,26,0.5);
+      color: var(--text-muted);
+      vertical-align: middle;
+    }
+    .deals-table tr:last-child td { border-bottom: none; }
+    .deals-table tr:hover td { background: rgba(36,28,16,0.6); }
+    .status-badge {
+      display: inline-block;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.55rem;
+      border-radius: 3px;
+    }
+    .status-outreach    { background: rgba(100,100,200,0.12); color: #8888ee; border: 1px solid rgba(100,100,200,0.25); }
+    .status-negotiating { background: rgba(200,146,42,0.12);  color: var(--gold); border: 1px solid rgba(200,146,42,0.25); }
+    .status-active      { background: rgba(90,153,84,0.15);   color: var(--green-light); border: 1px solid rgba(90,153,84,0.3); }
+    .status-complete    { background: rgba(60,60,54,0.4);      color: var(--text-dim); border: 1px solid var(--border); }
+    .deals-table .brand-name { color: var(--text); font-weight: 600; }
+    .deal-notes { max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .btn-icon {
+      background: none; border: none; cursor: pointer;
+      color: var(--text-dim); font-size: 0.8rem; padding: 0.2rem 0.4rem;
+      border-radius: 3px; transition: color 0.15s;
+      font-family: var(--font-body);
+    }
+    .btn-icon:hover { color: var(--gold); }
+    .btn-icon.del:hover { color: #c85a2a; }
+
+    /* Deal edit modal */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.7);
+      display: none; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--black-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      width: 100%; max-width: 500px;
+      box-shadow: var(--shadow-lg);
+    }
+    .modal h3 {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+    }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+    .modal-grid .fg-full { grid-column: 1 / -1; }
+    .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1rem; }
+    .btn-secondary {
+      padding: 0.55rem 1rem;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-muted);
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .btn-secondary:hover { border-color: var(--text-dim); }
+
+    /* ── Calendar ────────────────────────────────────────── */
+    .cal-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem; gap:0.75rem; }
+    .cal-nav h2 { font-family:var(--font-heading); font-size:1.3rem; color:var(--text); }
+    .cal-nav-group { display:flex; gap:0.5rem; align-items:center; }
+    .cal-nav-btn { background:none; border:1px solid var(--border); border-radius:var(--radius); color:var(--text-muted); font-size:0.82rem; padding:0.4rem 0.85rem; cursor:pointer; font-family:var(--font-body); transition:border-color 0.2s,color 0.2s; }
+    .cal-nav-btn:hover { border-color:var(--gold); color:var(--gold); }
+    .cal-today-btn { font-size:0.62rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; }
+    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+    .cal-day-header { background:var(--black-soft); padding:0.5rem; text-align:center; font-size:0.62rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-dim); }
+    .cal-day { background:var(--black-card); min-height:110px; padding:0.5rem; display:flex; flex-direction:column; gap:0.3rem; cursor:pointer; transition:background 0.15s; }
+    .cal-day:hover { background:var(--black-soft); }
+    .cal-day.today { background:var(--green-dark); }
+    .cal-day.other-month { background:var(--black); opacity:0.4; pointer-events:none; }
+    .cal-day-num { font-size:0.75rem; font-weight:600; color:var(--text-dim); margin-bottom:0.15rem; }
+    .cal-day.today .cal-day-num { color:var(--gold); font-weight:700; }
+    .cal-chip { font-size:0.6rem; font-weight:600; padding:0.15rem 0.4rem; border-radius:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+    .cal-chip.reel     { background:rgba(106,148,72,0.18); color:var(--green-light); border:1px solid rgba(106,148,72,0.3); }
+    .cal-chip.photo    { background:rgba(158,120,50,0.15); color:var(--gold-light); border:1px solid rgba(158,120,50,0.25); }
+    .cal-chip.carousel { background:rgba(100,100,200,0.12); color:#8888ee; border:1px solid rgba(100,100,200,0.2); }
+    .cal-chip.story    { background:rgba(90,90,78,0.2); color:var(--text-muted); border:1px solid var(--border); }
+    .cal-chip.posted   { opacity:0.5; text-decoration:line-through; }
+    .cal-more { font-size:0.58rem; color:var(--text-dim); }
+    /* Calendar day modal */
+    .cal-modal-overlay { position:fixed; inset:0; z-index:300; background:rgba(0,0,0,0.65); display:none; align-items:center; justify-content:center; }
+    .cal-modal-overlay.open { display:flex; }
+    .cal-modal { background:var(--black-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:1.75rem; width:100%; max-width:420px; box-shadow:var(--shadow-lg); }
+    .cal-modal-date { font-size:0.65rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem; }
+    .cal-modal-list { display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1rem; min-height:20px; }
+    .cal-modal-item { display:flex; align-items:center; justify-content:space-between; gap:0.5rem; font-size:0.82rem; color:var(--text-muted); }
+    .cal-modal-item-title { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .cal-modal-empty { font-size:0.8rem; color:var(--text-dim); }
+    .cal-modal-divider { border:none; border-top:1px solid var(--border); margin:1rem 0; }
+    .cal-modal-add-title { font-size:0.62rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-dim); margin-bottom:0.6rem; }
+    .cal-modal-row { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-bottom:0.75rem; }
+    .cal-modal-row input, .cal-modal-row select { background:var(--black-soft); border:1px solid var(--border); border-radius:var(--radius); color:var(--text); font-family:var(--font-body); font-size:0.82rem; padding:0.45rem 0.65rem; outline:none; transition:border-color 0.2s; }
+    .cal-modal-row input:focus, .cal-modal-row select:focus { border-color:var(--gold); }
+    .cal-modal-row input { flex:1; min-width:140px; }
+    .cal-modal-actions { display:flex; justify-content:flex-end; gap:0.6rem; margin-top:1.25rem; }
+
+    /* ── Empty states ────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    /* ── Orders tab ─────────────────────────────────────── */
+    .orders-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem; margin-bottom: 2rem;
+    }
+    .orders-table-wrap { overflow-x: auto; }
+    .orders-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    .orders-table th {
+      text-align: left;
+      font-size: 0.65rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .orders-table td {
+      padding: 0.85rem 0.75rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+    .orders-table tr:last-child td { border-bottom: none; }
+    .order-customer { color: var(--text); font-weight: 500; }
+    .order-engraving { color: var(--gold); font-size: 0.72rem; }
+    .order-status {
+      padding: 0.3rem 0.65rem;
+      border-radius: var(--radius);
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      border: none; cursor: pointer;
+      font-family: var(--font-body);
+    }
+    .status-paid      { background: rgba(158,120,50,0.15); color: var(--gold); }
+    .status-processing{ background: rgba(80,120,160,0.15); color: #7ab0d4; }
+    .status-shipped   { background: rgba(60,140,80,0.15);  color: #7dcf9a; }
+    .status-delivered { background: rgba(100,100,100,0.15);color: var(--text-muted); }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .kanban { grid-template-columns: 1fr 1fr; }
+      .profile-stats { gap: 1rem; }
+    }
+    @media (max-width: 600px) {
+      .tab-panel { padding: 1rem; }
+      .kanban { grid-template-columns: 1fr; }
+      .dash-header { padding: 0.75rem 1rem; }
+      .tabs { padding: 0 0.75rem; }
+      .profile-bar { flex-wrap: wrap; }
+      .profile-stats { margin-left: 0; width: 100%; justify-content: space-around; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Password Gate -->
+  <div id="gate">
+    <div class="gate-box">
+      <div class="gate-logo">Graft Wild</div>
+      <div class="gate-sub">Dashboard</div>
+      <input type="password" id="pw-input" placeholder="Enter password" autocomplete="current-password" />
+      <button id="pw-btn">Unlock</button>
+      <div class="gate-error" id="pw-error"></div>
+    </div>
+  </div>
+
+  <!-- App -->
+  <div id="app">
+
+    <!-- Header -->
+    <header class="dash-header">
+      <div>
+        <span class="dash-logo">Graft <span>Wild</span></span>
+      </div>
+      <span class="dash-meta" id="last-updated"></span>
+      <button class="dash-logout" id="logout-btn">Lock</button>
+    </header>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="analytics">Analytics</button>
+      <button class="tab-btn" data-tab="ideas">Content Ideas</button>
+      <button class="tab-btn" data-tab="deals">Brand Deals</button>
+      <button class="tab-btn" data-tab="calendar">Calendar</button>
+      <button class="tab-btn" data-tab="orders">Orders</button>
+    </div>
+
+    <!-- ── Analytics Tab ──────────────────────────────────── -->
+    <div class="tab-panel active" id="tab-analytics">
+      <div id="analytics-loading" class="empty-state">Loading analytics...</div>
+      <div id="analytics-content" style="display:none">
+
+        <!-- Profile -->
+        <div class="profile-bar" id="profile-bar"></div>
+
+        <!-- Stat cards -->
+        <div class="stat-grid" id="stat-grid"></div>
+
+        <!-- Reach chart -->
+        <div class="chart-section">
+          <div class="chart-title">Daily Reach — Last 30 Days</div>
+          <canvas id="reach-chart"></canvas>
+        </div>
+
+        <!-- Top by engagement -->
+        <div class="section-hdr">
+          <h3>Top Posts by Engagement</h3>
+        </div>
+        <table class="top-table" id="top-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Type</th>
+              <th>Caption</th>
+              <th>Likes</th>
+              <th>Comments</th>
+              <th>Shares</th>
+              <th>Saves</th>
+              <th>Reach</th>
+              <th>Eng.</th>
+              <th>Link</th>
+            </tr>
+          </thead>
+          <tbody id="top-table-body"></tbody>
+        </table>
+
+
+      </div>
+    </div>
+
+    <!-- ── Content Ideas Tab ──────────────────────────────── -->
+    <div class="tab-panel" id="tab-ideas">
+      <form class="add-idea-form" id="idea-form">
+        <div class="form-group fg-title">
+          <label for="idea-title">Idea Title</label>
+          <input type="text" id="idea-title" placeholder="e.g. Morning creek reel" required />
+        </div>
+        <div class="form-group fg-type">
+          <label for="idea-type">Type</label>
+          <select id="idea-type">
+            <option>Reel</option>
+            <option>Photo</option>
+            <option>Carousel</option>
+            <option>Story</option>
+          </select>
+        </div>
+        <div class="form-group fg-notes">
+          <label for="idea-notes">Notes</label>
+          <input type="text" id="idea-notes" placeholder="Concept, location, gear needed..." />
+        </div>
+        <button type="submit" class="btn-add">Add Idea</button>
+      </form>
+      <div class="kanban" id="kanban"></div>
+    </div>
+
+    <!-- ── Brand Deals Tab ────────────────────────────────── -->
+    <div class="tab-panel" id="tab-deals">
+      <div style="display:flex; gap:0.75rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+        <button class="btn-add" id="new-deal-btn">+ New Deal</button>
+      </div>
+      <div class="deals-table-wrap">
+        <table class="deals-table">
+          <thead>
+            <tr>
+              <th>Brand</th>
+              <th>Status</th>
+              <th>Rate</th>
+              <th>Deadline</th>
+              <th>Notes</th>
+              <th>Edit</th>
+            </tr>
+          </thead>
+          <tbody id="deals-tbody"></tbody>
+        </table>
+        <div id="deals-empty" class="empty-state" style="display:none">No deals yet. Add one above.</div>
+      </div>
+    </div>
+
+    <!-- ── Calendar Tab ───────────────────────────────────── -->
+    <div class="tab-panel" id="tab-calendar"></div>
+
+    <div class="tab-panel" id="tab-orders">
+      <div id="orders-content"><p style="color:var(--text-dim);font-size:0.9rem;">Loading orders…</p></div>
+    </div>
+
+  </div><!-- /#app -->
+
+  <!-- Deal Modal -->
+  <div class="modal-overlay" id="deal-modal">
+    <div class="modal">
+      <h3 id="modal-title">New Deal</h3>
+      <div class="modal-grid">
+        <div class="form-group"><label>Brand</label><input type="text" id="deal-brand" placeholder="Brand name" /></div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="deal-status">
+            <option value="outreach">Outreach</option>
+            <option value="negotiating">Negotiating</option>
+            <option value="active">Active</option>
+            <option value="complete">Complete</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Rate ($)</label><input type="text" id="deal-rate" placeholder="e.g. 500 or TBD" /></div>
+        <div class="form-group"><label>Deadline</label><input type="date" id="deal-deadline" /></div>
+        <div class="form-group fg-full"><label>Notes</label><textarea id="deal-notes" placeholder="Contact, deliverables, details..."></textarea></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="modal-cancel">Cancel</button>
+        <button class="btn-danger" id="modal-delete" style="display:none">Delete</button>
+        <button class="btn-add" id="modal-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar Day Modal -->
+  <div class="cal-modal-overlay" id="cal-modal">
+    <div class="cal-modal">
+      <div class="cal-modal-date" id="cal-modal-date"></div>
+      <div class="cal-modal-list" id="cal-modal-list"></div>
+      <hr class="cal-modal-divider" />
+      <div class="cal-modal-add-title">Schedule existing idea</div>
+      <div class="cal-modal-row">
+        <select id="cal-schedule-select" style="flex:1"></select>
+        <button class="btn-add" id="cal-schedule-btn" style="white-space:nowrap">Add</button>
+      </div>
+      <div class="cal-modal-add-title">Quick add new idea</div>
+      <div class="cal-modal-row">
+        <input type="text" id="cal-quick-title" placeholder="Idea title..." />
+        <select id="cal-quick-type">
+          <option>Reel</option><option>Photo</option><option>Carousel</option><option>Story</option>
+        </select>
+        <button class="btn-add" id="cal-quick-btn" style="white-space:nowrap">Create</button>
+      </div>
+      <div class="cal-modal-actions">
+        <button class="btn-secondary" id="cal-modal-close">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

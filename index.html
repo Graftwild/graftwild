@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graft Wild</title>
+  <meta name="description" content="Land. Water. Performance. Fishing, homesteading, and wild food with Stryder Graft." />
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    /* ── Nav ─────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 2.5rem;
+      background: linear-gradient(to bottom, rgba(19,15,8,0.95), transparent);
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ── Hero ────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 60%, rgba(44,66,32,0.22) 0%, transparent 60%),
+        radial-gradient(ellipse at 75% 30%, rgba(158,120,50,0.08) 0%, transparent 50%),
+        linear-gradient(160deg, #130f08 0%, #17120a 50%, #0e0c06 100%);
+    }
+    /* Subtle grain texture overlay */
+    .hero-bg::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.35;
+    }
+    .hero-content { position: relative; z-index: 1; padding: 0 1.5rem; }
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.25rem;
+    }
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(3.5rem, 10vw, 8rem);
+      font-weight: 900;
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+    .hero-title span { color: var(--gold); }
+    .hero-tagline {
+      font-size: 0.85rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+    }
+    .hero-tagline strong { color: var(--text); font-weight: 500; }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 2rem;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      text-decoration: none;
+    }
+    .hero-cta:hover { background: var(--gold); color: var(--black); }
+    .hero-scroll {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      color: var(--text-dim); font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; animation: bounce 2s ease-in-out infinite;
+    }
+    .hero-scroll svg { width: 16px; height: 16px; }
+    @keyframes bounce { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(6px); } }
+
+    /* ── Divider ─────────────────────────────────────────── */
+    .divider {
+      display: flex; align-items: center; gap: 1rem;
+      max-width: 300px; margin: 0 auto 3rem;
+    }
+    .divider-line { flex: 1; height: 1px; background: var(--border); }
+    .divider-icon { color: var(--gold); font-size: 0.9rem; }
+
+    /* ── Values ──────────────────────────────────────────── */
+    .values {
+      padding: 6rem 2rem;
+      background: var(--black-soft);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .section-label {
+      text-align: center;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+    }
+    .section-title {
+      text-align: center;
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4rem;
+    }
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2px;
+      max-width: 960px;
+      margin: 0 auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .value-card {
+      padding: 3rem 2.5rem;
+      background: var(--black-card);
+      border-right: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+    .value-card:last-child { border-right: none; }
+    .value-card:hover { background: var(--green-dark); }
+    .value-number {
+      font-family: var(--font-heading);
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+    .value-name {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+    .value-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ── Products ────────────────────────────────────────── */
+    .products {
+      padding: 6rem 2rem;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .product-card {
+      background: var(--black-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .product-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+    .product-img {
+      width: 100%; aspect-ratio: 4/3;
+      background: var(--green-dark);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-dim); font-size: 0.75rem; letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .product-body { padding: 1.5rem; }
+    .product-tag {
+      display: inline-block;
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(200,146,42,0.1);
+      border: 1px solid rgba(200,146,42,0.2);
+      border-radius: 3px;
+      padding: 0.2rem 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .product-name {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .product-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+    }
+    .product-link {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex; align-items: center; gap: 0.4rem;
+      transition: gap 0.2s;
+    }
+    .product-link:hover { gap: 0.7rem; }
+
+    /* ── About strip ─────────────────────────────────────── */
+    .about-strip {
+      padding: 5rem 2rem;
+      background: var(--black-soft);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .about-inner { max-width: 640px; margin: 0 auto; }
+    .about-strip p {
+      font-size: 1.15rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      line-height: 1.9;
+    }
+    .about-strip p strong { color: var(--text); font-weight: 600; }
+    .about-strip .ig-link {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 2rem;
+      padding: 0.7rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .about-strip .ig-link:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    footer {
+      padding: 2.5rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .footer-logo {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    footer p {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    footer a:hover { color: var(--gold); }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 640px) {
+      nav { padding: 1rem 1.25rem; }
+      .nav-links { gap: 1.25rem; }
+      .values-grid { grid-template-columns: 1fr; }
+      .value-card { border-right: none; border-bottom: 1px solid var(--border); }
+      .value-card:last-child { border-bottom: none; }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <span class="nav-logo">Graft Wild</span>
+    <ul class="nav-links">
+      <li><a href="#values">Values</a></li>
+      <li><a href="/shop">Shop</a></li>
+      <li><a href="#products">Gear</a></li>
+      <li><a href="https://instagram.com/stryder.g" target="_blank" rel="noopener">Instagram</a></li>
+      <li><a href="/cart">Cart <span id="cart-count" style="color:var(--gold)"></span></a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">@stryder.g</p>
+      <h1 class="hero-title">Graft<br /><span>Wild</span></h1>
+      <p class="hero-tagline">
+        <strong>Land</strong> &nbsp;|&nbsp; <strong>Water</strong> &nbsp;|&nbsp; <strong>Performance</strong>
+      </p>
+      <a href="#products" class="hero-cta">
+        Gear I Trust
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3l5 5-5 5M3 8h10"/></svg>
+      </a>
+    </div>
+    <div class="hero-scroll">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3v10M4 9l4 4 4-4"/></svg>
+      Scroll
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="values" id="values">
+    <p class="section-label">What drives this</p>
+    <h2 class="section-title">The Foundation</h2>
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-number">01</div>
+        <div class="value-name">Land</div>
+        <p class="value-desc">
+          Homesteading isn't a hobby — it's a philosophy. Growing food, learning to live from the ground, and building something real with your hands. The land gives back what you put in.
+        </p>
+      </div>
+      <div class="value-card">
+        <div class="value-number">02</div>
+        <div class="value-name">Water</div>
+        <p class="value-desc">
+          Every cast is a study in patience and presence. Fishing is where I reset — reading the water, understanding the ecosystem, and earning the catch. It never gets old.
+        </p>
+      </div>
+      <div class="value-card">
+        <div class="value-number">03</div>
+        <div class="value-name">Performance</div>
+        <p class="value-desc">
+          The gear matters. The method matters. Whether it's a rod, a reel, or a recipe — I only endorse what I've actually put to work. No fluff, no filler.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products -->
+  <!-- Shop CTA -->
+  <section id="shop" style="padding:4rem 2.5rem;text-align:center;background:linear-gradient(to bottom,var(--black),#17120a);border-bottom:1px solid var(--border)">
+    <p style="font-size:0.7rem;font-weight:600;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem">Made in the Keys</p>
+    <h2 style="font-family:var(--font-heading);font-size:clamp(2rem,5vw,3.5rem);font-weight:900;color:var(--text);margin-bottom:1rem">Laser Engraved Boards</h2>
+    <p style="font-size:0.95rem;color:var(--text-muted);max-width:460px;margin:0 auto 2rem;line-height:1.7">Hardwood cutting boards built for the kitchen, the camp, or the fish house. Personalized with free engraving. Ships in 5–7 days.</p>
+    <a href="/shop" style="display:inline-block;padding:0.9rem 2.5rem;background:var(--gold);color:var(--black);border-radius:var(--radius);font-family:var(--font-body);font-size:0.82rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;text-decoration:none;transition:background 0.2s" onmouseover="this.style.background='var(--gold-light)'" onmouseout="this.style.background='var(--gold)'">Shop the Boards</a>
+  </section>
+
+  <section class="products" id="products">
+    <p class="section-label">Tried & tested</p>
+    <h2 class="section-title">Gear I Swear By</h2>
+    <div class="products-grid">
+
+      <!-- Product cards — edit these freely -->
+
+      <div class="product-card">
+        <div class="product-img">[ Add Photo ]</div>
+        <div class="product-body">
+          <span class="product-tag">Fishing</span>
+          <div class="product-name">Product Name Here</div>
+          <p class="product-desc">Short honest description — what it does, why you use it, what makes it worth the money.</p>
+          <a href="#" class="product-link">
+            View Product
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-img">[ Add Photo ]</div>
+        <div class="product-body">
+          <span class="product-tag">Homestead</span>
+          <div class="product-name">Product Name Here</div>
+          <p class="product-desc">Short honest description — what it does, why you use it, what makes it worth the money.</p>
+          <a href="#" class="product-link">
+            View Product
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-img">[ Add Photo ]</div>
+        <div class="product-body">
+          <span class="product-tag">Wild Food</span>
+          <div class="product-name">Product Name Here</div>
+          <p class="product-desc">Short honest description — what it does, why you use it, what makes it worth the money.</p>
+          <a href="#" class="product-link">
+            View Product
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-img">[ Add Photo ]</div>
+        <div class="product-body">
+          <span class="product-tag">Gear</span>
+          <div class="product-name">Product Name Here</div>
+          <p class="product-desc">Short honest description — what it does, why you use it, what makes it worth the money.</p>
+          <a href="#" class="product-link">
+            View Product
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- About strip -->
+  <section class="about-strip">
+    <div class="about-inner">
+      <p>
+        I'm <strong>Stryder Graft</strong> — fishing guide, homesteader, wild food forager.
+        I built Graft Wild to share what I actually do, not what looks good on camera.
+        <strong>No sponsorships without genuine use.</strong> No filler content.
+      </p>
+      <a href="https://instagram.com/stryder.g" target="_blank" rel="noopener" class="ig-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        Follow @stryder.g
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <span class="footer-logo">Graft Wild</span>
+    <p>Partnerships: <a href="mailto:partnerships@graftwild.com">partnerships@graftwild.com</a></p>
+    <p>&copy; 2026 Graft Wild</p>
+  </footer>
+
+<script>
+  (function() {
+    try {
+      const cart = JSON.parse(localStorage.getItem('gw_cart') || '[]');
+      const count = cart.reduce((s, i) => s + (i.qty || 1), 0);
+      const el = document.getElementById('cart-count');
+      if (el && count > 0) el.textContent = '(' + count + ')';
+    } catch {}
+  })();
+</script>
+</body>
+</html>

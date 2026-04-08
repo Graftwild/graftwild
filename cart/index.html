@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cart — Graft Wild</title>
+  <link rel="stylesheet" href="/assets/style.css" />
+  <style>
+    /* ── Nav ─────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 2.5rem;
+      background: rgba(19,15,8,0.97);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.1rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text); text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.8rem; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-muted); transition: color 0.2s; text-decoration: none;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+
+    /* ── Page ────────────────────────────────────────────── */
+    .page-header {
+      padding: 7rem 2.5rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(to bottom, #17120a, var(--black));
+    }
+    .page-header-eyebrow {
+      font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.5rem;
+    }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900; color: var(--text);
+    }
+
+    /* ── Cart layout ─────────────────────────────────────── */
+    .cart-page {
+      max-width: 900px; margin: 0 auto;
+      padding: 3rem 2rem 6rem;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    /* ── Line items ──────────────────────────────────────── */
+    .cart-items { display: flex; flex-direction: column; gap: 1rem; }
+    .cart-item {
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      gap: 1.25rem;
+      align-items: center;
+      padding: 1.25rem;
+      background: var(--black-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+    .item-img {
+      width: 90px; height: 68px;
+      object-fit: cover; border-radius: var(--radius);
+      background: var(--black-soft);
+    }
+    .item-img-placeholder {
+      width: 90px; height: 68px;
+      background: linear-gradient(135deg, #1c160c, #241c10);
+      border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .item-img-placeholder span {
+      font-size: 0.55rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-dim);
+    }
+    .item-details { min-width: 0; }
+    .item-name {
+      font-family: var(--font-heading);
+      font-size: 1rem; font-weight: 700;
+      color: var(--text); margin-bottom: 0.2rem;
+    }
+    .item-meta {
+      font-size: 0.72rem; color: var(--text-dim);
+      letter-spacing: 0.05em; margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+    .item-engraving {
+      display: inline-block;
+      font-size: 0.7rem; color: var(--gold);
+      background: rgba(158,120,50,0.1);
+      border: 1px solid rgba(158,120,50,0.2);
+      border-radius: var(--radius);
+      padding: 0.15rem 0.5rem;
+      letter-spacing: 0.05em;
+    }
+    .item-actions {
+      display: flex; flex-direction: column;
+      align-items: flex-end; gap: 0.75rem;
+    }
+    .item-price {
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--gold-pale);
+    }
+    .item-qty {
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .qty-btn {
+      width: 1.9rem; height: 1.9rem;
+      background: var(--black-soft);
+      border: 1px solid var(--border);
+      color: var(--text); font-size: 1rem;
+      border-radius: var(--radius); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.15s;
+    }
+    .qty-btn:hover { border-color: var(--gold); }
+    .qty-num {
+      font-size: 0.9rem; font-weight: 600;
+      color: var(--text); min-width: 1.25rem; text-align: center;
+    }
+    .btn-remove {
+      background: none; border: none;
+      font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-dim); cursor: pointer;
+      transition: color 0.15s; padding: 0;
+    }
+    .btn-remove:hover { color: #c85a2a; }
+
+    /* ── Empty state ─────────────────────────────────────── */
+    .cart-empty {
+      padding: 4rem 0; text-align: center;
+      color: var(--text-muted);
+      grid-column: 1 / -1;
+    }
+    .cart-empty h2 {
+      font-family: var(--font-heading);
+      font-size: 1.5rem; font-weight: 700;
+      color: var(--text); margin-bottom: 0.75rem;
+    }
+    .cart-empty p { font-size: 0.9rem; margin-bottom: 2rem; }
+    .btn-shop {
+      display: inline-block;
+      padding: 0.8rem 2rem;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: var(--font-body);
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      border-radius: var(--radius); text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-shop:hover { background: var(--gold); color: var(--black); }
+
+    /* ── Order summary ───────────────────────────────────── */
+    .order-summary {
+      background: var(--black-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      position: sticky; top: 5.5rem;
+    }
+    .summary-title {
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 1.25rem;
+    }
+    .summary-row {
+      display: flex; justify-content: space-between;
+      align-items: baseline;
+      font-size: 0.85rem; color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+    .summary-row.total {
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--text); margin-top: 1rem;
+      padding-top: 1rem; border-top: 1px solid var(--border);
+    }
+    .summary-note {
+      font-size: 0.72rem; color: var(--text-dim);
+      line-height: 1.6; margin: 1rem 0;
+    }
+    .btn-checkout {
+      width: 100%; padding: 1rem;
+      background: var(--gold);
+      color: var(--black); border: none;
+      border-radius: var(--radius);
+      font-family: var(--font-body);
+      font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      cursor: pointer; transition: background 0.2s;
+      text-decoration: none; display: block; text-align: center;
+    }
+    .btn-checkout:hover { background: var(--gold-light); }
+    .btn-checkout.disabled {
+      opacity: 0.4; pointer-events: none;
+    }
+    .btn-continue {
+      display: block; text-align: center;
+      margin-top: 0.85rem;
+      font-size: 0.75rem; color: var(--text-dim);
+      text-decoration: none; letter-spacing: 0.05em;
+      transition: color 0.15s;
+    }
+    .btn-continue:hover { color: var(--gold); }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo {
+      font-family: var(--font-heading); font-size: 0.95rem;
+      font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    footer p { font-size: 0.75rem; color: var(--text-dim); }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.25rem; }
+      .nav-links { gap: 1.25rem; }
+      .page-header { padding: 5.5rem 1.25rem 2rem; }
+      .cart-page { grid-template-columns: 1fr; gap: 2rem; padding: 2rem 1.25rem 4rem; }
+      .order-summary { position: static; }
+      .cart-item { grid-template-columns: 70px 1fr auto; gap: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Graft Wild</a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/shop">Shop</a></li>
+    <li><a href="https://www.instagram.com/stryder.g/" target="_blank" rel="noopener">Instagram</a></li>
+    <li><a href="/cart" class="active">Cart <span id="cart-count" style="color:var(--gold)"></span></a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <p class="page-header-eyebrow">Review Your Order</p>
+  <h1>Your Cart</h1>
+</div>
+
+<div id="cart-page" class="cart-page"></div>
+
+<footer>
+  <span class="footer-logo">Graft Wild</span>
+  <p>© 2026 Graft Wild. Florida Keys.</p>
+  <p><a href="mailto:partnerships@graftwild.com" style="color:var(--text-dim)">partnerships@graftwild.com</a></p>
+</footer>
+
+<script>
+  function getCart() {
+    try { return JSON.parse(localStorage.getItem('gw_cart') || '[]'); } catch { return []; }
+  }
+  function saveCart(c) { localStorage.setItem('gw_cart', JSON.stringify(c)); }
+  function formatPrice(cents) { return '$' + (cents / 100).toFixed(2); }
+
+  function updateCartBadge() {
+    const count = getCart().reduce((s, i) => s + (i.qty || 1), 0);
+    const el = document.getElementById('cart-count');
+    if (el) el.textContent = count > 0 ? `(${count})` : '';
+  }
+
+  function render() {
+    const cart = getCart();
+    updateCartBadge();
+    const wrap = document.getElementById('cart-page');
+
+    if (!cart.length) {
+      wrap.innerHTML = `
+        <div class="cart-empty">
+          <h2>Your cart is empty</h2>
+          <p>Head back to the shop and find something worth keeping.</p>
+          <a class="btn-shop" href="/shop">Browse the Shop</a>
+        </div>`;
+      return;
+    }
+
+    const subtotal = cart.reduce((s, i) => s + i.price * (i.qty || 1), 0);
+
+    const itemsHtml = cart.map((item, idx) => {
+      const lineTotal = item.price * (item.qty || 1);
+      const imgEl = `<div class="item-img-placeholder"><span>Board</span></div>`;
+      const engravingEl = item.engraving
+        ? `<span class="item-engraving">✦ "${item.engraving}"</span>`
+        : '';
+      return `
+        <div class="cart-item" data-idx="${idx}">
+          ${imgEl}
+          <div class="item-details">
+            <div class="item-name">${item.name}</div>
+            <div class="item-meta">${item.size ? item.size + ' · ' : ''}Free engraving</div>
+            ${engravingEl}
+          </div>
+          <div class="item-actions">
+            <div class="item-price">${formatPrice(lineTotal)}</div>
+            <div class="item-qty">
+              <button class="qty-btn" data-action="down" data-idx="${idx}">−</button>
+              <span class="qty-num">${item.qty || 1}</span>
+              <button class="qty-btn" data-action="up" data-idx="${idx}">+</button>
+            </div>
+            <button class="btn-remove" data-action="remove" data-idx="${idx}">Remove</button>
+          </div>
+        </div>`;
+    }).join('');
+
+    wrap.innerHTML = `
+      <div class="cart-items">${itemsHtml}</div>
+      <div class="order-summary">
+        <div class="summary-title">Order Summary</div>
+        <div class="summary-row"><span>Subtotal (${cart.reduce((s,i)=>s+(i.qty||1),0)} item${cart.length!==1?'s':''})</span><span>${formatPrice(subtotal)}</span></div>
+        <div class="summary-row"><span>Shipping</span><span>Calculated at checkout</span></div>
+        <div class="summary-row total"><span>Estimated Total</span><span>${formatPrice(subtotal)}</span></div>
+        <p class="summary-note">Shipping and taxes calculated at checkout. Each board ships in 5–7 business days.</p>
+        <a class="btn-checkout" href="/checkout">Proceed to Checkout</a>
+        <a class="btn-continue" href="/shop">← Continue Shopping</a>
+      </div>`;
+
+    // Event delegation
+    wrap.addEventListener('click', e => {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const idx = parseInt(btn.dataset.idx);
+      const cart = getCart();
+      const action = btn.dataset.action;
+
+      if (action === 'up') {
+        if (cart[idx].qty < 10) cart[idx].qty = (cart[idx].qty || 1) + 1;
+      } else if (action === 'down') {
+        if ((cart[idx].qty || 1) > 1) cart[idx].qty--;
+        else cart.splice(idx, 1);
+      } else if (action === 'remove') {
+        cart.splice(idx, 1);
+      }
+
+      saveCart(cart);
+      render();
+    });
+  }
+
+  render();
+</script>
+</body>
+</html>

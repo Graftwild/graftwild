@@ -1,0 +1,15 @@
+{
+  "name": "graftwild-ig-tool",
+  "version": "1.0.0",
+  "description": "Instagram Platform API fetcher for Graft Wild dashboard",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "auth":  "node auth-setup.js",
+    "fetch": "node fetch.js",
+    "prep":  "node dashboard-prep.js",
+    "all":   "node fetch.js && node dashboard-prep.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
