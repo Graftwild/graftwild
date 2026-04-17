@@ -1,3 +1,33 @@
+# Environment & secrets
 .env
-node_modules/
+ig-tool/.env
 ig-tool/.token.json
+
+# Dependencies
+node_modules/
+remotion-engine/node_modules/
+
+# Private Instagram data
+ig-tool/data/
+ig-tool/temp/
+ig-tool/style-profiles/
+
+# Private order + customer data
+data/orders.json
+invoices/
+orders/
+data/
+db/
+/*order*.json
+/*orders*.json
+/*customer*.json
+/*customers*.json
+
+# Clip downloads
+remotion-engine/clips/
+
+# Claude project settings
+.claude/
+
+# macOS
+.DS_Store

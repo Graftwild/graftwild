@@ -1,893 +1,883 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Graft Wild — Dashboard</title>
-  <link rel="stylesheet" href="../assets/style.css" />
-  <script>if(localStorage.getItem('gw_unlocked')){document.documentElement.style.setProperty('--gate-display','none');document.documentElement.style.setProperty('--app-display','flex');}</script>
-  <style>
-    /* ── Password Gate ───────────────────────────────────── */
-    #gate {
-      position: fixed; inset: 0; z-index: 999;
-      background: var(--black);
-      display: var(--gate-display, flex); align-items: center; justify-content: center;
-    }
-    .gate-box {
-      width: 100%; max-width: 380px;
-      padding: 2.5rem;
-      background: var(--black-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      text-align: center;
-    }
-    .gate-logo {
-      font-family: var(--font-heading);
-      font-size: 1.5rem;
-      font-weight: 900;
-      letter-spacing: 0.1em;
-      color: var(--text);
-      margin-bottom: 0.4rem;
-    }
-    .gate-sub {
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 2rem;
-    }
-    .gate-box input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      background: var(--black-soft);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text);
-      font-family: var(--font-body);
-      font-size: 1rem;
-      text-align: center;
-      letter-spacing: 0.15em;
-      outline: none;
-      margin-bottom: 1rem;
-      transition: border-color 0.2s;
-    }
-    .gate-box input:focus { border-color: var(--gold); }
-    .gate-box button {
-      width: 100%;
-      padding: 0.8rem;
-      background: var(--gold);
-      color: var(--black);
-      border: none;
-      border-radius: var(--radius);
-      font-family: var(--font-body);
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .gate-box button:hover { background: var(--gold-light); }
-    .gate-error {
-      margin-top: 0.75rem;
-      font-size: 0.8rem;
-      color: #c85a2a;
-      min-height: 1.2em;
-    }
-
-    /* ── App shell ───────────────────────────────────────── */
-    #app { display: var(--app-display, none); min-height: 100vh; flex-direction: column; }
-
-    /* ── Header ──────────────────────────────────────────── */
-    .dash-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1rem 2rem;
-      background: var(--black-soft);
-      border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; z-index: 50;
-    }
-    .dash-logo {
-      font-family: var(--font-heading);
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text);
-    }
-    .dash-logo span { color: var(--gold); }
-    .dash-meta {
-      font-size: 0.72rem;
-      color: var(--text-dim);
-      letter-spacing: 0.05em;
-    }
-    .dash-logout {
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 0.35rem 0.75rem;
-      cursor: pointer;
-      transition: color 0.2s, border-color 0.2s;
-      font-family: var(--font-body);
-    }
-    .dash-logout:hover { color: var(--text); border-color: var(--text-dim); }
-
-    /* ── Tabs ────────────────────────────────────────────── */
-    .tabs {
-      display: flex; gap: 0;
-      background: var(--black-soft);
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem;
-      overflow-x: auto;
-    }
-    .tab-btn {
-      padding: 0.85rem 1.5rem;
-      font-family: var(--font-body);
-      font-size: 0.78rem;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: color 0.2s, border-color 0.2s;
-    }
-    .tab-btn:hover { color: var(--text-muted); }
-    .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
-
-    /* ── Tab panels ──────────────────────────────────────── */
-    .tab-panel { display: none; padding: 2rem; }
-    .tab-panel.active { display: block; }
-
-    /* ── Stat cards ──────────────────────────────────────── */
-    .stat-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .stat-card {
-      background: var(--black-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 1.25rem 1.5rem;
-    }
-    .stat-label {
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 0.5rem;
-    }
-    .stat-value {
-      font-family: var(--font-heading);
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1;
-      margin-bottom: 0.35rem;
-    }
-    .stat-trend {
-      font-size: 0.75rem;
-      font-weight: 500;
-    }
-    .stat-trend.up   { color: var(--green-light); }
-    .stat-trend.down { color: #c85a2a; }
-    .stat-trend.flat { color: var(--text-dim); }
-
-    /* ── Profile header ──────────────────────────────────── */
-    .profile-bar {
-      display: flex; align-items: center; gap: 1.25rem;
-      background: var(--black-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 2rem;
-    }
-    .profile-pic {
-      width: 56px; height: 56px;
-      border-radius: 50%;
-      border: 2px solid var(--gold);
-      object-fit: cover;
-      flex-shrink: 0;
-      background: var(--green-dark);
-    }
-    .profile-info h2 {
-      font-family: var(--font-heading);
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 0.15rem;
-    }
-    .profile-info p {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-    .profile-stats {
-      display: flex; gap: 2rem;
-      margin-left: auto;
-    }
-    .profile-stat { text-align: center; }
-    .profile-stat strong {
-      display: block;
-      font-family: var(--font-heading);
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-    .profile-stat span {
-      font-size: 0.65rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-    }
-
-    /* ── Chart ───────────────────────────────────────────── */
-    .chart-section {
-      background: var(--black-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-    }
-    .chart-title {
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 1rem;
-    }
-    #reach-chart {
-      width: 100%; height: 160px;
-      display: block;
-    }
-
-    /* ── Section headers ─────────────────────────────────── */
-    .section-hdr {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 1rem;
-    }
-    .section-hdr h3 {
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-
-    /* ── Post grid ───────────────────────────────────────── */
-    .post-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .post-thumb {
-      background: var(--black-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      cursor: pointer;
-      transition: border-color 0.2s;
-    }
-    .post-thumb:hover { border-color: var(--gold); }
-    .post-thumb-img {
-      width: 100%; aspect-ratio: 1;
-      object-fit: cover;
-      background: var(--green-dark);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem;
-    }
-    .post-thumb-img img { width: 100%; height: 100%; object-fit: cover; }
-    .post-thumb-body { padding: 0.6rem 0.75rem; }
-    .post-type-badge {
-      display: inline-block;
-      font-size: 0.55rem;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      padding: 0.15rem 0.4rem;
-      border-radius: 3px;
-      margin-bottom: 0.4rem;
-    }
-    .badge-reel     { background: rgba(90,153,84,0.15); color: var(--green-light); border: 1px solid rgba(90,153,84,0.3); }
-    .badge-image    { background: rgba(200,146,42,0.12); color: var(--gold); border: 1px solid rgba(200,146,42,0.25); }
-    .badge-carousel { background: rgba(100,100,200,0.12); color: #8888ee; border: 1px solid rgba(100,100,200,0.25); }
-    .post-stat-row {
-      display: flex; gap: 0.75rem;
-      font-size: 0.7rem;
-      color: var(--text-dim);
-    }
-    .post-stat-row span { display: flex; align-items: center; gap: 0.2rem; }
-
-    /* ── Top posts table ─────────────────────────────────── */
-    .top-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.82rem;
-      margin-bottom: 2rem;
-    }
-    .top-table th {
-      text-align: left;
-      padding: 0.6rem 0.75rem;
-      font-size: 0.62rem;
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      border-bottom: 1px solid var(--border);
-    }
-    .top-table td {
-      padding: 0.75rem;
-      border-bottom: 1px solid rgba(60,46,26,0.6);
-      color: var(--text-muted);
-      vertical-align: middle;
-    }
-    .top-table tr:last-child td { border-bottom: none; }
-    .top-table tr:hover td { background: var(--black-card); }
-    .top-table .caption-cell {
-      max-width: 280px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      color: var(--text);
-    }
-    .top-table a { color: var(--text-dim); font-size: 0.7rem; }
-    .top-table a:hover { color: var(--gold); }
-
-    /* ── Kanban ──────────────────────────────────────────── */
-    .kanban {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      align-items: start;
-    }
-    .kanban-col {
-      background: var(--black-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-    }
-    .kanban-col-header {
-      padding: 0.8rem 1rem;
-      background: rgba(0,0,0,0.2);
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .kanban-col-title {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-    .kanban-count {
-      font-size: 0.65rem;
-      background: var(--border);
-      color: var(--text-dim);
-      border-radius: 10px;
-      padding: 0.1rem 0.5rem;
-    }
-    .kanban-cards { padding: 0.75rem; display: flex; flex-direction: column; gap: 0.6rem; min-height: 80px; }
-    .idea-card {
-      background: var(--black-soft);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 0.85rem;
-      transition: border-color 0.2s;
-    }
-    .idea-card:hover { border-color: var(--text-dim); }
-    .idea-card-title {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 0.25rem;
-    }
-    .idea-card-type {
-      display: inline-block;
-      font-size: 0.58rem;
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 0.4rem;
-    }
-    .idea-card-notes {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      line-height: 1.5;
-      margin-bottom: 0.6rem;
-    }
-    .idea-card-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-    .btn-move {
-      font-size: 0.6rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.2rem 0.5rem;
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      color: var(--text-dim);
-      cursor: pointer;
-      font-family: var(--font-body);
-      transition: border-color 0.15s, color 0.15s;
-    }
-    .btn-move:hover { border-color: var(--gold); color: var(--gold); }
-    .btn-delete {
-      font-size: 0.6rem;
-      padding: 0.2rem 0.5rem;
-      background: none;
-      border: 1px solid transparent;
-      border-radius: 3px;
-      color: var(--text-dim);
-      cursor: pointer;
-      font-family: var(--font-body);
-      margin-left: auto;
-      transition: color 0.15s;
-    }
-    .btn-delete:hover { color: #c85a2a; }
-
-    /* Add idea form */
-    .add-idea-form {
-      display: flex; gap: 0.75rem; flex-wrap: wrap;
-      background: var(--black-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 1.25rem;
-      margin-bottom: 1.5rem;
-      align-items: flex-end;
-    }
-    .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
-    .form-group label {
-      font-size: 0.62rem;
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-    }
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      background: var(--black-soft);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text);
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      padding: 0.55rem 0.75rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus { border-color: var(--gold); }
-    .form-group select option { background: var(--black-soft); }
-    .form-group textarea { resize: vertical; min-height: 60px; }
-    .fg-title { flex: 2; min-width: 160px; }
-    .fg-type  { min-width: 120px; }
-    .fg-notes { flex: 3; min-width: 200px; }
-    .btn-add {
-      padding: 0.55rem 1.25rem;
-      background: var(--gold);
-      color: var(--black);
-      border: none;
-      border-radius: var(--radius);
-      font-family: var(--font-body);
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: background 0.2s;
-      white-space: nowrap;
-      align-self: flex-end;
-    }
-    .btn-add:hover { background: var(--gold-light); }
-    .btn-danger {
-      padding: 0.55rem 1rem;
-      background: none;
-      color: #c85a2a;
-      border: 1px solid rgba(200,90,42,0.3);
-      border-radius: var(--radius);
-      font-family: var(--font-body);
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: background 0.2s, border-color 0.2s;
-    }
-    .btn-danger:hover { background: rgba(200,90,42,0.1); border-color: #c85a2a; }
-
-    /* ── Deals table ─────────────────────────────────────── */
-    .deals-table-wrap { overflow-x: auto; }
-    .deals-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-    }
-    .deals-table th {
-      text-align: left;
-      padding: 0.7rem 1rem;
-      font-size: 0.62rem;
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-      background: var(--black-soft);
-    }
-    .deals-table td {
-      padding: 0.8rem 1rem;
-      border-bottom: 1px solid rgba(60,46,26,0.5);
-      color: var(--text-muted);
-      vertical-align: middle;
-    }
-    .deals-table tr:last-child td { border-bottom: none; }
-    .deals-table tr:hover td { background: rgba(36,28,16,0.6); }
-    .status-badge {
-      display: inline-block;
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0.2rem 0.55rem;
-      border-radius: 3px;
-    }
-    .status-outreach    { background: rgba(100,100,200,0.12); color: #8888ee; border: 1px solid rgba(100,100,200,0.25); }
-    .status-negotiating { background: rgba(200,146,42,0.12);  color: var(--gold); border: 1px solid rgba(200,146,42,0.25); }
-    .status-active      { background: rgba(90,153,84,0.15);   color: var(--green-light); border: 1px solid rgba(90,153,84,0.3); }
-    .status-complete    { background: rgba(60,60,54,0.4);      color: var(--text-dim); border: 1px solid var(--border); }
-    .deals-table .brand-name { color: var(--text); font-weight: 600; }
-    .deal-notes { max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .btn-icon {
-      background: none; border: none; cursor: pointer;
-      color: var(--text-dim); font-size: 0.8rem; padding: 0.2rem 0.4rem;
-      border-radius: 3px; transition: color 0.15s;
-      font-family: var(--font-body);
-    }
-    .btn-icon:hover { color: var(--gold); }
-    .btn-icon.del:hover { color: #c85a2a; }
-
-    /* Deal edit modal */
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,0.7);
-      display: none; align-items: center; justify-content: center;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--black-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 2rem;
-      width: 100%; max-width: 500px;
-      box-shadow: var(--shadow-lg);
-    }
-    .modal h3 {
-      font-family: var(--font-heading);
-      font-size: 1.1rem;
-      color: var(--text);
-      margin-bottom: 1.25rem;
-    }
-    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
-    .modal-grid .fg-full { grid-column: 1 / -1; }
-    .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1rem; }
-    .btn-secondary {
-      padding: 0.55rem 1rem;
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text-muted);
-      font-family: var(--font-body);
-      font-size: 0.75rem;
-      cursor: pointer;
-      transition: border-color 0.15s;
-    }
-    .btn-secondary:hover { border-color: var(--text-dim); }
-
-    /* ── Calendar ────────────────────────────────────────── */
-    .cal-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem; gap:0.75rem; }
-    .cal-nav h2 { font-family:var(--font-heading); font-size:1.3rem; color:var(--text); }
-    .cal-nav-group { display:flex; gap:0.5rem; align-items:center; }
-    .cal-nav-btn { background:none; border:1px solid var(--border); border-radius:var(--radius); color:var(--text-muted); font-size:0.82rem; padding:0.4rem 0.85rem; cursor:pointer; font-family:var(--font-body); transition:border-color 0.2s,color 0.2s; }
-    .cal-nav-btn:hover { border-color:var(--gold); color:var(--gold); }
-    .cal-today-btn { font-size:0.62rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; }
-    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
-    .cal-day-header { background:var(--black-soft); padding:0.5rem; text-align:center; font-size:0.62rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-dim); }
-    .cal-day { background:var(--black-card); min-height:110px; padding:0.5rem; display:flex; flex-direction:column; gap:0.3rem; cursor:pointer; transition:background 0.15s; }
-    .cal-day:hover { background:var(--black-soft); }
-    .cal-day.today { background:var(--green-dark); }
-    .cal-day.other-month { background:var(--black); opacity:0.4; pointer-events:none; }
-    .cal-day-num { font-size:0.75rem; font-weight:600; color:var(--text-dim); margin-bottom:0.15rem; }
-    .cal-day.today .cal-day-num { color:var(--gold); font-weight:700; }
-    .cal-chip { font-size:0.6rem; font-weight:600; padding:0.15rem 0.4rem; border-radius:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
-    .cal-chip.reel     { background:rgba(106,148,72,0.18); color:var(--green-light); border:1px solid rgba(106,148,72,0.3); }
-    .cal-chip.photo    { background:rgba(158,120,50,0.15); color:var(--gold-light); border:1px solid rgba(158,120,50,0.25); }
-    .cal-chip.carousel { background:rgba(100,100,200,0.12); color:#8888ee; border:1px solid rgba(100,100,200,0.2); }
-    .cal-chip.story    { background:rgba(90,90,78,0.2); color:var(--text-muted); border:1px solid var(--border); }
-    .cal-chip.posted   { opacity:0.5; text-decoration:line-through; }
-    .cal-more { font-size:0.58rem; color:var(--text-dim); }
-    /* Calendar day modal */
-    .cal-modal-overlay { position:fixed; inset:0; z-index:300; background:rgba(0,0,0,0.65); display:none; align-items:center; justify-content:center; }
-    .cal-modal-overlay.open { display:flex; }
-    .cal-modal { background:var(--black-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:1.75rem; width:100%; max-width:420px; box-shadow:var(--shadow-lg); }
-    .cal-modal-date { font-size:0.65rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem; }
-    .cal-modal-list { display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1rem; min-height:20px; }
-    .cal-modal-item { display:flex; align-items:center; justify-content:space-between; gap:0.5rem; font-size:0.82rem; color:var(--text-muted); }
-    .cal-modal-item-title { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .cal-modal-empty { font-size:0.8rem; color:var(--text-dim); }
-    .cal-modal-divider { border:none; border-top:1px solid var(--border); margin:1rem 0; }
-    .cal-modal-add-title { font-size:0.62rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-dim); margin-bottom:0.6rem; }
-    .cal-modal-row { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-bottom:0.75rem; }
-    .cal-modal-row input, .cal-modal-row select { background:var(--black-soft); border:1px solid var(--border); border-radius:var(--radius); color:var(--text); font-family:var(--font-body); font-size:0.82rem; padding:0.45rem 0.65rem; outline:none; transition:border-color 0.2s; }
-    .cal-modal-row input:focus, .cal-modal-row select:focus { border-color:var(--gold); }
-    .cal-modal-row input { flex:1; min-width:140px; }
-    .cal-modal-actions { display:flex; justify-content:flex-end; gap:0.6rem; margin-top:1.25rem; }
-
-    /* ── Empty states ────────────────────────────────────── */
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--text-dim);
-      font-size: 0.85rem;
-    }
-
-    /* ── Orders tab ─────────────────────────────────────── */
-    .orders-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 1rem; margin-bottom: 2rem;
-    }
-    .orders-table-wrap { overflow-x: auto; }
-    .orders-table {
-      width: 100%; border-collapse: collapse;
-      font-size: 0.82rem;
-    }
-    .orders-table th {
-      text-align: left;
-      font-size: 0.65rem; font-weight: 600;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--text-dim);
-      padding: 0.6rem 0.75rem;
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-    }
-    .orders-table td {
-      padding: 0.85rem 0.75rem;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      color: var(--text-muted);
-      vertical-align: top;
-    }
-    .orders-table tr:last-child td { border-bottom: none; }
-    .order-customer { color: var(--text); font-weight: 500; }
-    .order-engraving { color: var(--gold); font-size: 0.72rem; }
-    .order-status {
-      padding: 0.3rem 0.65rem;
-      border-radius: var(--radius);
-      font-size: 0.68rem; font-weight: 600;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      border: none; cursor: pointer;
-      font-family: var(--font-body);
-    }
-    .status-paid      { background: rgba(158,120,50,0.15); color: var(--gold); }
-    .status-processing{ background: rgba(80,120,160,0.15); color: #7ab0d4; }
-    .status-shipped   { background: rgba(60,140,80,0.15);  color: #7dcf9a; }
-    .status-delivered { background: rgba(100,100,100,0.15);color: var(--text-muted); }
-
-    /* ── Responsive ──────────────────────────────────────── */
-    @media (max-width: 900px) {
-      .kanban { grid-template-columns: 1fr 1fr; }
-      .profile-stats { gap: 1rem; }
-    }
-    @media (max-width: 600px) {
-      .tab-panel { padding: 1rem; }
-      .kanban { grid-template-columns: 1fr; }
-      .dash-header { padding: 0.75rem 1rem; }
-      .tabs { padding: 0 0.75rem; }
-      .profile-bar { flex-wrap: wrap; }
-      .profile-stats { margin-left: 0; width: 100%; justify-content: space-around; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graft Wild — Creator Dashboard</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- Password Gate -->
-  <div id="gate">
-    <div class="gate-box">
-      <div class="gate-logo">Graft Wild</div>
-      <div class="gate-sub">Dashboard</div>
-      <input type="password" id="pw-input" placeholder="Enter password" autocomplete="current-password" />
-      <button id="pw-btn">Unlock</button>
-      <div class="gate-error" id="pw-error"></div>
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="brand">
+    <div class="brand-name">Graft Wild</div>
+    <div class="brand-sub">Creator Dashboard</div>
+  </div>
+  <nav>
+    <a class="active" onclick="showPage('overview')" data-page="overview">
+      <span class="icon">&#9632;</span> Overview
+    </a>
+    <div class="nav-section">Business</div>
+    <a onclick="showPage('deals')" data-page="deals">
+      <span class="icon">&#9673;</span> Brand Deals
+    </a>
+    <a onclick="showPage('outreach')" data-page="outreach">
+      <span class="icon">&#9993;</span> Outreach
+    </a>
+    <div class="nav-section">Content</div>
+    <a onclick="showPage('ideas')" data-page="ideas">
+      <span class="icon">&#9998;</span> Content Ideas
+    </a>
+    <a onclick="showPage('signals')" data-page="signals">
+      <span class="icon">&#128161;</span> Content Signals
+    </a>
+    <a onclick="showPage('calendar')" data-page="calendar">
+      <span class="icon">&#128197;</span> Shoot Calendar
+    </a>
+    <a onclick="showPage('studio')" data-page="studio">
+      <span class="icon">&#9654;</span> Content Studio
+    </a>
+  </nav>
+
+  <!-- Refresh button pinned to sidebar bottom -->
+  <div class="sidebar-bottom">
+    <button id="refresh-btn"
+            onclick="triggerRefresh()"
+            class="btn btn-ghost btn-sidebar-refresh">
+      &#8635;&nbsp; Refresh Data
+    </button>
+  </div>
+</nav>
+
+<!-- Sidebar resize handle -->
+<div id="sidebar-handle" title="Drag to resize sidebar"></div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- ═══════════════════ OVERVIEW ═══════════════════ -->
+  <div id="page-overview" class="page active">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Overview</div>
+        <div class="page-desc" id="overview-date"></div>
+      </div>
+    </div>
+
+    <!-- Pipeline banner -->
+    <div id="overview-pipeline"></div>
+
+    <!-- Two-col: Active Deals + Upcoming Shoots -->
+    <div class="two-col mt-section">
+      <div>
+        <div class="section-title">Active &amp; Pending Deals</div>
+        <div id="overview-deals" class="recent-list"></div>
+      </div>
+      <div class="col-divider" title="Drag to resize"></div>
+      <div>
+        <div class="section-title">Upcoming Shoots</div>
+        <div id="overview-shoots" class="recent-list"></div>
+      </div>
+    </div>
+
+    <!-- Two-col: Top Ideas + Top Signals -->
+    <div class="two-col mt-section">
+      <div>
+        <div class="section-title">Top Content Ideas</div>
+        <div id="overview-ideas" class="recent-list"></div>
+      </div>
+      <div class="col-divider" title="Drag to resize"></div>
+      <div>
+        <div class="section-title">Comments to Script</div>
+        <div id="overview-ig" class="recent-list"></div>
+      </div>
     </div>
   </div>
 
-  <!-- App -->
-  <div id="app">
-
-    <!-- Header -->
-    <header class="dash-header">
+  <!-- ═══════════════════ BRAND DEALS ═══════════════════ -->
+  <div id="page-deals" class="page">
+    <div class="page-header">
       <div>
-        <span class="dash-logo">Graft <span>Wild</span></span>
+        <div class="page-title">Brand Deals</div>
+        <div class="page-desc">Track sponsorships and partnerships from pitch to payment</div>
       </div>
-      <span class="dash-meta" id="last-updated"></span>
-      <button class="dash-logout" id="logout-btn">Lock</button>
-    </header>
-
-    <!-- Tabs -->
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="analytics">Analytics</button>
-      <button class="tab-btn" data-tab="ideas">Content Ideas</button>
-      <button class="tab-btn" data-tab="deals">Brand Deals</button>
-      <button class="tab-btn" data-tab="calendar">Calendar</button>
-      <button class="tab-btn" data-tab="orders">Orders</button>
+      <button class="btn btn-primary" onclick="openModal('deal')">+ Add Deal</button>
     </div>
 
-    <!-- ── Analytics Tab ──────────────────────────────────── -->
-    <div class="tab-panel active" id="tab-analytics">
-      <div id="analytics-loading" class="empty-state">Loading analytics...</div>
-      <div id="analytics-content" style="display:none">
+    <div id="deals-nudge"></div>
 
-        <!-- Profile -->
-        <div class="profile-bar" id="profile-bar"></div>
+    <div id="deals-pipeline"></div>
 
-        <!-- Stat cards -->
-        <div class="stat-grid" id="stat-grid"></div>
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="setFilter('deals','all',this)">All</button>
+      <button class="filter-btn" onclick="setFilter('deals','pitched',this)">Pitched</button>
+      <button class="filter-btn" onclick="setFilter('deals','negotiating',this)">Negotiating</button>
+      <button class="filter-btn" onclick="setFilter('deals','signed',this)">Signed</button>
+      <button class="filter-btn" onclick="setFilter('deals','completed',this)">Completed</button>
+      <button class="filter-btn" onclick="setFilter('deals','rejected',this)">Rejected</button>
+    </div>
 
-        <!-- Reach chart -->
-        <div class="chart-section">
-          <div class="chart-title">Daily Reach — Last 30 Days</div>
-          <canvas id="reach-chart"></canvas>
+    <div class="table-wrap">
+      <div class="table-toolbar">
+        <span class="table-toolbar-title" id="deals-count">0 deals</span>
+        <input class="search-input" type="text" placeholder="Search deals..." oninput="renderDeals(this.value)">
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Brand</th>
+            <th>Value</th>
+            <th>Status</th>
+            <th>Deadline</th>
+            <th>Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="deals-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ OUTREACH ═══════════════════ -->
+  <div id="page-outreach" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Outreach</div>
+        <div class="page-desc">Manage brand contacts and follow-ups</div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('outreach')">+ Add Contact</button>
+    </div>
+
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="setFilter('outreach','all',this)">All</button>
+      <button class="filter-btn" onclick="setFilter('outreach','to contact',this)">To Contact</button>
+      <button class="filter-btn" onclick="setFilter('outreach','contacted',this)">Contacted</button>
+      <button class="filter-btn" onclick="setFilter('outreach','replied',this)">Replied</button>
+      <button class="filter-btn" onclick="setFilter('outreach','in talks',this)">In Talks</button>
+      <button class="filter-btn" onclick="setFilter('outreach','closed',this)">Closed</button>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-toolbar">
+        <span class="table-toolbar-title" id="outreach-count">0 contacts</span>
+        <input class="search-input" type="text" placeholder="Search contacts..." oninput="renderOutreach(this.value)">
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Contact</th>
+            <th>Brand / Company</th>
+            <th>Platform</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Last Contact</th>
+            <th>Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="outreach-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- ── Lead Gen ──────────────────────────────────────────────────────── -->
+    <div class="leadgen-section">
+      <div class="leadgen-header">
+        <div>
+          <div class="section-title">🔍 Lead Gen</div>
+          <div class="section-desc">Scan brands in your niche — get contacts + AI-drafted pitch emails</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="toggleLeadGenPanel()" id="leadgen-toggle-btn">Expand ↓</button>
+      </div>
+
+      <div id="leadgen-panel" style="display:none">
+        <!-- Search bar -->
+        <div class="leadgen-search-row">
+          <input type="text" id="leadgen-query" class="leadgen-input"
+                 placeholder="e.g. chicken feed, homestead gear, outdoor cooking tools..."
+                 onkeydown="if(event.key==='Enter') scanLeads()">
+          <select id="leadgen-count" class="leadgen-select">
+            <option value="6">6 leads</option>
+            <option value="10" selected>10 leads</option>
+            <option value="15">15 leads</option>
+          </select>
+          <button class="btn btn-primary" id="leadgen-scan-btn" onclick="scanLeads()">🔍 Find Brands</button>
         </div>
 
-        <!-- Top by engagement -->
-        <div class="section-hdr">
-          <h3>Top Posts by Engagement</h3>
+        <!-- Context chips -->
+        <div class="leadgen-chips">
+          <span class="leadgen-chip" onclick="leadgenSetQuery('backyard chicken products')">🐔 Chicken products</span>
+          <span class="leadgen-chip" onclick="leadgenSetQuery('homestead food and farm supply')">🌾 Homestead / farm supply</span>
+          <span class="leadgen-chip" onclick="leadgenSetQuery('outdoor cooking and foraging gear')">🔥 Outdoor cooking</span>
+          <span class="leadgen-chip" onclick="leadgenSetQuery('natural pet and animal health')">🐾 Animal health</span>
+          <span class="leadgen-chip" onclick="leadgenSetQuery('sustainable living and zero waste')">♻️ Sustainable living</span>
         </div>
-        <table class="top-table" id="top-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Type</th>
-              <th>Caption</th>
-              <th>Likes</th>
-              <th>Comments</th>
-              <th>Shares</th>
-              <th>Saves</th>
-              <th>Reach</th>
-              <th>Eng.</th>
-              <th>Link</th>
-            </tr>
-          </thead>
-          <tbody id="top-table-body"></tbody>
-        </table>
+
+        <!-- Results -->
+        <div id="leadgen-results"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEAD GEN DRAFT EMAIL MODAL -->
+  <div class="modal-backdrop" id="modal-leadgen-draft">
+    <div class="modal modal--wide">
+      <div class="modal-header">
+        <span class="modal-title">Drafted Pitch Email</span>
+        <button class="modal-close" onclick="closeModal('leadgen-draft')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="leadgen-draft-meta" class="leadgen-draft-meta"></div>
+        <textarea id="leadgen-draft-body" class="leadgen-draft-body" spellcheck="true"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('leadgen-draft')">Close</button>
+        <button class="btn btn-ghost" onclick="leadgenCopyEmail()">📋 Copy</button>
+        <button class="btn btn-primary" onclick="leadgenSaveToOutreach()">+ Save to Outreach</button>
+      </div>
+    </div>
+  </div>
 
 
+  <!-- ═══════════════════ CONTENT IDEAS ═══════════════════ -->
+  <div id="page-ideas" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Content Ideas</div>
+        <div class="page-desc">Capture ideas from audience questions, comments, and your own inspiration</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary" id="generate-idea-btn" onclick="generateIdea()">&#10024; Generate Idea</button>
+        <button class="btn btn-primary" onclick="openModal('idea')">+ Add Idea</button>
       </div>
     </div>
 
-    <!-- ── Content Ideas Tab ──────────────────────────────── -->
-    <div class="tab-panel" id="tab-ideas">
-      <form class="add-idea-form" id="idea-form">
-        <div class="form-group fg-title">
-          <label for="idea-title">Idea Title</label>
-          <input type="text" id="idea-title" placeholder="e.g. Morning creek reel" required />
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="setFilter('ideas','all',this)">All</button>
+      <button class="filter-btn" onclick="setFilter('ideas','idea',this)">Idea</button>
+      <button class="filter-btn" onclick="setFilter('ideas','scripted',this)">Scripted</button>
+      <button class="filter-btn" onclick="setFilter('ideas','filmed',this)">Filmed</button>
+      <button class="filter-btn" onclick="setFilter('ideas','edited',this)">Edited</button>
+      <button class="filter-btn" onclick="setFilter('ideas','published',this)">Published</button>
+    </div>
+
+    <div class="cards-grid" id="ideas-grid"></div>
+  </div>
+
+  <!-- ═══════════════════ CONTENT SIGNALS ═══════════════════ -->
+  <div id="page-signals" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Content Signals</div>
+        <div class="page-desc" id="signals-summary">Questions &amp; requests from your audience worth turning into videos</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" onclick="openModal('igq')">+ Save Signal</button>
+      </div>
+    </div>
+
+    <div class="filter-search-bar">
+      <div class="filter-row filter-row--flush">
+        <button class="filter-btn active" onclick="setSignalsFilter('all',this)">All</button>
+        <button class="filter-btn" onclick="setSignalsFilter('saved',this)">Saved &#10003;</button>
+        <button class="filter-btn" onclick="setSignalsFilter('questions',this)">Questions</button>
+        <button class="filter-btn" onclick="setSignalsFilter('requests',this)">Requests</button>
+        <button class="filter-btn" onclick="setSignalsFilter('liked',this)">Top Liked</button>
+      </div>
+      <input class="search-input" type="text" placeholder="Search..." oninput="renderSignals(this.value)">
+    </div>
+
+    <div id="signals-grid"></div>
+  </div>
+
+  <!-- ═══════════════════ SHOOT CALENDAR ═══════════════════ -->
+  <div id="page-calendar" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Shoot Calendar</div>
+        <div class="page-desc">Plan when to shoot, script, and post — linked to your deals and ideas</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-ghost" onclick="calNav(-1)">&#8592;</button>
+        <span id="cal-month-label"></span>
+        <button class="btn btn-ghost" onclick="calNav(1)">&#8594;</button>
+        <button class="btn btn-primary" onclick="openModal('shoot')">+ Add Shoot</button>
+      </div>
+    </div>
+    <div id="cal-grid"></div>
+    <div class="cal-section">
+      <div class="section-title">Upcoming Shoots</div>
+      <div id="cal-upcoming" class="recent-list"></div>
+    </div>
+
+    <!-- ── Ideas Backlog ─────────────────────────────────────── -->
+    <div class="cal-section">
+      <div class="section-header-row">
+        <div>
+          <div class="section-title">Content Ideas Backlog</div>
+          <div class="section-desc">Drag any idea onto a day above to schedule it</div>
         </div>
-        <div class="form-group fg-type">
-          <label for="idea-type">Type</label>
-          <select id="idea-type">
-            <option>Reel</option>
-            <option>Photo</option>
-            <option>Carousel</option>
-            <option>Story</option>
+        <div class="header-actions">
+          <select id="cal-ideas-filter" class="cal-ideas-filter-sel" onchange="renderCalIdeas()">
+            <option value="unscheduled">Unscheduled</option>
+            <option value="all">All Ideas</option>
           </select>
         </div>
-        <div class="form-group fg-notes">
-          <label for="idea-notes">Notes</label>
-          <input type="text" id="idea-notes" placeholder="Concept, location, gear needed..." />
+      </div>
+      <div id="cal-ideas-backlog" class="cal-ideas-grid"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ CONTENT STUDIO ═══════════════════ -->
+  <div id="page-studio" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Content Studio</div>
+        <div class="page-desc">Analyze your videos, build style profiles, and synthesize your brand fingerprint</div>
+      </div>
+    </div>
+
+    <!-- Section 1: Analyze Video -->
+    <div class="studio-section">
+      <div class="section-title">Analyze Video</div>
+      <input type="file" id="studio-file-input" accept=".mp4,.mov,.m4v" style="display:none">
+      <div class="studio-drop-zone" id="studio-drop-zone">
+        <div class="studio-drop-icon" id="studio-drop-icon">+</div>
+        <div class="studio-drop-label" id="studio-drop-label">Drag &amp; drop video here, or click to select</div>
+        <div class="studio-drop-sub" id="studio-drop-sub">Accepts .mp4 &middot; .mov &middot; .m4v &nbsp;&middot;&nbsp; max 100 MB</div>
+      </div>
+      <div class="studio-controls">
+        <input type="text" class="studio-text-input" id="studio-video-label" placeholder="Video name / label (optional)">
+        <button class="btn btn-primary" id="studio-analyze-btn">Analyze</button>
+      </div>
+      <div class="studio-loading" id="studio-analyze-loading" style="display:none">
+        <div class="studio-spinner"></div>
+        <span id="studio-loading-msg">Extracting frames&hellip;</span>
+      </div>
+      <div id="studio-analyze-result" style="display:none"></div>
+    </div>
+
+    <div class="studio-divider"></div>
+
+    <!-- Section 2: Style Profiles -->
+    <div class="studio-section">
+      <div class="section-title">Style Profiles</div>
+      <div class="studio-loading" id="studio-profiles-loading" style="display:none">
+        <div class="studio-spinner"></div>
+        <span>Loading profiles&hellip;</span>
+      </div>
+      <div class="studio-empty" id="studio-profiles-empty" style="display:none">
+        No profiles yet. Analyze a video above to get started.
+      </div>
+      <div id="studio-profiles-grid"></div>
+    </div>
+
+    <div class="studio-divider"></div>
+
+    <!-- Section 3: Master Style Guide -->
+    <div class="studio-section">
+      <div class="section-title">Master Style Guide</div>
+      <button class="btn btn-primary" id="studio-master-btn">Generate Master Style Guide</button>
+      <div class="studio-loading" id="studio-master-loading" style="display:none; margin-top:16px">
+        <div class="studio-spinner"></div>
+        <span>Synthesizing patterns across all profiles&hellip;</span>
+      </div>
+      <div id="studio-master-wrapper" style="display:none; margin-top:24px">
+        <div class="studio-master-label">Graftwild Content Fingerprint</div>
+        <div id="studio-master-cards"></div>
+      </div>
+    </div>
+
+    <!-- ── Reel Generator ─────────────────────────────────────────── -->
+    <div class="studio-section">
+      <div class="section-title">Reel Generator</div>
+
+      <div class="reel-input-row">
+        <div class="reel-field">
+          <label class="reel-label" for="reel-drive-url">Google Drive Folder URL</label>
+          <input type="text" class="reel-input" id="reel-drive-url"
+                 placeholder="https://drive.google.com/drive/folders/...">
         </div>
-        <button type="submit" class="btn-add">Add Idea</button>
-      </form>
-      <div class="kanban" id="kanban"></div>
-    </div>
-
-    <!-- ── Brand Deals Tab ────────────────────────────────── -->
-    <div class="tab-panel" id="tab-deals">
-      <div style="display:flex; gap:0.75rem; margin-bottom:1.5rem; flex-wrap:wrap;">
-        <button class="btn-add" id="new-deal-btn">+ New Deal</button>
+        <div class="reel-field reel-field--short">
+          <label class="reel-label" for="reel-project-name">Project Name</label>
+          <input type="text" class="reel-input" id="reel-project-name"
+                 placeholder="my-reel">
+        </div>
       </div>
-      <div class="deals-table-wrap">
-        <table class="deals-table">
-          <thead>
-            <tr>
-              <th>Brand</th>
-              <th>Status</th>
-              <th>Rate</th>
-              <th>Deadline</th>
-              <th>Notes</th>
-              <th>Edit</th>
-            </tr>
-          </thead>
-          <tbody id="deals-tbody"></tbody>
-        </table>
-        <div id="deals-empty" class="empty-state" style="display:none">No deals yet. Add one above.</div>
+
+      <button class="btn btn-primary" id="reel-download-btn" style="margin-top:12px">Download Clips</button>
+
+      <div class="studio-loading" id="reel-loading" style="display:none; margin-top:16px">
+        <div class="studio-spinner"></div>
+        <span>Downloading clips from Google Drive&hellip;</span>
       </div>
+
+      <div id="reel-clips-wrapper" style="display:none; margin-top:20px">
+        <div class="reel-clips-label">Downloaded Clips</div>
+        <div id="reel-clips-list"></div>
+        <button class="btn" id="reel-generate-btn" disabled
+                style="margin-top:16px; opacity:0.45; cursor:not-allowed">
+          Generate Reel
+        </button>
+      </div>
+
+      <div id="reel-error" style="display:none; margin-top:12px; color:var(--red-lt); font-size:0.82rem"></div>
     </div>
+  </div>
 
-    <!-- ── Calendar Tab ───────────────────────────────────── -->
-    <div class="tab-panel" id="tab-calendar"></div>
+</div><!-- /main -->
 
-    <div class="tab-panel" id="tab-orders">
-      <div id="orders-content"><p style="color:var(--text-dim);font-size:0.9rem;">Loading orders…</p></div>
+<!-- ══════════════════════════ MODALS ══════════════════════════ -->
+
+<!-- DEAL MODAL -->
+<div class="modal-backdrop" id="modal-deal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="deal-modal-title">Add Brand Deal</span>
+      <button class="modal-close" onclick="closeModal('deal')">&times;</button>
     </div>
-
-  </div><!-- /#app -->
-
-  <!-- Deal Modal -->
-  <div class="modal-overlay" id="deal-modal">
-    <div class="modal">
-      <h3 id="modal-title">New Deal</h3>
-      <div class="modal-grid">
-        <div class="form-group"><label>Brand</label><input type="text" id="deal-brand" placeholder="Brand name" /></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Brand Name *</label>
+          <input type="text" id="deal-brand" placeholder="e.g. Benchmade">
+        </div>
+        <div class="form-group">
+          <label>Deal Type</label>
+          <select id="deal-type">
+            <option value="sponsored post">Sponsored Post</option>
+            <option value="product gifting">Product Gifting</option>
+            <option value="ambassador">Ambassador</option>
+            <option value="affiliate">Affiliate</option>
+            <option value="collaboration">Collaboration</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Value ($)</label>
+          <input type="number" id="deal-value" placeholder="0.00" min="0" step="0.01">
+        </div>
         <div class="form-group">
           <label>Status</label>
           <select id="deal-status">
-            <option value="outreach">Outreach</option>
+            <option value="pitched">Pitched</option>
             <option value="negotiating">Negotiating</option>
-            <option value="active">Active</option>
-            <option value="complete">Complete</option>
+            <option value="signed">Signed</option>
+            <option value="completed">Completed</option>
+            <option value="rejected">Rejected</option>
           </select>
         </div>
-        <div class="form-group"><label>Rate ($)</label><input type="text" id="deal-rate" placeholder="e.g. 500 or TBD" /></div>
-        <div class="form-group"><label>Deadline</label><input type="date" id="deal-deadline" /></div>
-        <div class="form-group fg-full"><label>Notes</label><textarea id="deal-notes" placeholder="Contact, deliverables, details..."></textarea></div>
       </div>
-      <div class="modal-actions">
-        <button class="btn-secondary" id="modal-cancel">Cancel</button>
-        <button class="btn-danger" id="modal-delete" style="display:none">Delete</button>
-        <button class="btn-add" id="modal-save">Save</button>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Deadline</label>
+          <input type="date" id="deal-deadline">
+        </div>
+        <div class="form-group">
+          <label>Contact Person</label>
+          <input type="text" id="deal-contact" placeholder="Name or email">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Deliverables</label>
+        <input type="text" id="deal-deliverables" placeholder="e.g. 2 reels + 1 story">
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="deal-notes" placeholder="Any details, requirements, or reminders..."></textarea>
       </div>
     </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('deal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveDeal()">Save Deal</button>
+    </div>
   </div>
+</div>
 
-  <!-- Calendar Day Modal -->
-  <div class="cal-modal-overlay" id="cal-modal">
-    <div class="cal-modal">
-      <div class="cal-modal-date" id="cal-modal-date"></div>
-      <div class="cal-modal-list" id="cal-modal-list"></div>
-      <hr class="cal-modal-divider" />
-      <div class="cal-modal-add-title">Schedule existing idea</div>
-      <div class="cal-modal-row">
-        <select id="cal-schedule-select" style="flex:1"></select>
-        <button class="btn-add" id="cal-schedule-btn" style="white-space:nowrap">Add</button>
+<!-- OUTREACH MODAL -->
+<div class="modal-backdrop" id="modal-outreach">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="outreach-modal-title">Add Contact</span>
+      <button class="modal-close" onclick="closeModal('outreach')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Contact Name *</label>
+          <input type="text" id="out-name" placeholder="Full name">
+        </div>
+        <div class="form-group">
+          <label>Brand / Company</label>
+          <input type="text" id="out-brand" placeholder="Company name">
+        </div>
       </div>
-      <div class="cal-modal-add-title">Quick add new idea</div>
-      <div class="cal-modal-row">
-        <input type="text" id="cal-quick-title" placeholder="Idea title..." />
-        <select id="cal-quick-type">
-          <option>Reel</option><option>Photo</option><option>Carousel</option><option>Story</option>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="out-email" placeholder="email@brand.com">
+        </div>
+        <div class="form-group">
+          <label>Platform / Channel</label>
+          <select id="out-platform">
+            <option value="instagram">Instagram</option>
+            <option value="email">Email</option>
+            <option value="linkedin">LinkedIn</option>
+            <option value="youtube">YouTube</option>
+            <option value="tiktok">TikTok</option>
+            <option value="dm">DM</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Status</label>
+          <select id="out-status">
+            <option value="to contact">To Contact</option>
+            <option value="contacted">Contacted</option>
+            <option value="replied">Replied</option>
+            <option value="in talks">In Talks</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Last Contact Date</label>
+          <input type="date" id="out-date">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Profile / Link</label>
+        <input type="text" id="out-link" placeholder="Instagram handle or URL">
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="out-notes" placeholder="Context, pitch angle, what you discussed..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('outreach')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveOutreach()">Save Contact</button>
+    </div>
+  </div>
+</div>
+
+<!-- SHOOT MODAL -->
+<div class="modal-backdrop" id="modal-shoot">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="shoot-modal-title">Add Shoot</span>
+      <button class="modal-close" onclick="closeModal('shoot')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Title *</label>
+        <input type="text" id="shoot-title" placeholder="e.g. Scratch & Peck feed reel">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date *</label>
+          <input type="date" id="shoot-date">
+        </div>
+        <div class="form-group">
+          <label>Time <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+          <input type="time" id="shoot-time">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <div class="shoot-type-row" id="shoot-type-btns">
+          <button type="button" class="shoot-type-btn active" data-val="shoot"   onclick="selectShootType(this)">🎬 Shoot</button>
+          <button type="button" class="shoot-type-btn"        data-val="script"  onclick="selectShootType(this)">✍️ Script</button>
+          <button type="button" class="shoot-type-btn"        data-val="edit"    onclick="selectShootType(this)">✂️ Edit</button>
+          <button type="button" class="shoot-type-btn"        data-val="post"    onclick="selectShootType(this)">📤 Post</button>
+          <button type="button" class="shoot-type-btn"        data-val="deadline" onclick="selectShootType(this)">⏰ Deadline</button>
+        </div>
+        <input type="hidden" id="shoot-type" value="shoot">
+      </div>
+      <div class="form-group">
+        <label>Linked Brand Deal (optional)</label>
+        <select id="shoot-deal">
+          <option value="">— None —</option>
         </select>
-        <button class="btn-add" id="cal-quick-btn" style="white-space:nowrap">Create</button>
       </div>
-      <div class="cal-modal-actions">
-        <button class="btn-secondary" id="cal-modal-close">Done</button>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="shoot-notes" placeholder="Location, gear needed, talking points..."></textarea>
       </div>
     </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('shoot')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveShoot()">Save</button>
+    </div>
   </div>
+</div>
 
-  <script src="app.js"></script>
+<!-- IDEA MODAL -->
+<div class="modal-backdrop" id="modal-idea">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="idea-modal-title">Add Content Idea</span>
+      <button class="modal-close" onclick="closeModal('idea')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Idea Title *</label>
+        <input type="text" id="idea-title" placeholder="e.g. Best budget bushcraft knives under $50">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Source</label>
+          <select id="idea-source">
+            <option value="audience question">Audience Question</option>
+            <option value="ig comment">IG Comment</option>
+            <option value="own idea">Own Idea</option>
+            <option value="trending">Trending Topic</option>
+            <option value="brand request">Brand Request</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Platform</label>
+          <select id="idea-platform">
+            <option value="instagram reel">Instagram Reel</option>
+            <option value="youtube">YouTube</option>
+            <option value="tiktok">TikTok</option>
+            <option value="instagram post">Instagram Post</option>
+            <option value="shorts">YouTube Shorts</option>
+            <option value="multi-platform">Multi-Platform</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Priority</label>
+          <select id="idea-priority">
+            <option value="high">High</option>
+            <option value="medium" selected>Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="idea-status">
+            <option value="idea">Idea</option>
+            <option value="scripted">Scripted</option>
+            <option value="filmed">Filmed</option>
+            <option value="edited">Edited</option>
+            <option value="published">Published</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Tags (comma-separated)</label>
+        <input type="text" id="idea-tags" placeholder="bushcraft, knives, beginner">
+      </div>
+      <div class="form-group">
+        <label>Hook Options (one per line)</label>
+        <textarea id="idea-hooks" placeholder="Option 1: hook text&#10;Option 2: hook text&#10;Option 3: hook text" style="min-height:80px"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Notes / Script Outline</label>
+        <textarea id="idea-notes" placeholder="Key points, hook idea, any research needed..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('idea')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveIdea()">Save Idea</button>
+    </div>
+  </div>
+</div>
+
+<!-- IG QUESTION MODAL -->
+<div class="modal-backdrop" id="modal-igq">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="igq-modal-title">Add IG Question</span>
+      <button class="modal-close" onclick="closeModal('igq')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Question (from comment) *</label>
+        <textarea id="igq-question" placeholder="Paste the exact comment/question here..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Commenter Handle</label>
+          <input type="text" id="igq-commenter" placeholder="@username">
+        </div>
+        <div class="form-group">
+          <label>Date Spotted</label>
+          <input type="date" id="igq-date">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Your Post / Reel it came from</label>
+        <input type="text" id="igq-post" placeholder="Post title or description">
+      </div>
+      <div class="form-group">
+        <label>Video Idea / Hook</label>
+        <input type="text" id="igq-idea" placeholder="How you'd turn this into a video...">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Status</label>
+          <select id="igq-status">
+            <option value="new">New</option>
+            <option value="planned">Planned</option>
+            <option value="filmed">Filmed</option>
+            <option value="published">Published</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Priority</label>
+          <select id="igq-priority">
+            <option value="high">High</option>
+            <option value="medium" selected>Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="igq-notes" placeholder="Any additional context or ideas..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('igq')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveIgq()">Save Question</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- CONFIRM DELETE MODAL -->
+<div class="modal-backdrop" id="modal-confirm">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-header">
+      <span class="modal-title">Confirm Delete</span>
+      <button class="modal-close" onclick="closeModal('confirm')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--muted);font-size:14px">Are you sure you want to delete this item? This cannot be undone.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('confirm')">Cancel</button>
+      <button class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- JS: data first, then logic -->
+<script src="js/studio.js"></script>
+<script src="js/ig-data.js"></script>
+<script src="js/ig-ideas.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/core.js"></script>
+<script src="js/overview.js"></script>
+<script src="js/deals.js"></script>
+<script src="js/outreach.js"></script>
+<script src="js/leadgen.js"></script>
+<script src="js/ideas.js"></script>
+<script src="js/signals.js"></script>
+<script src="js/calendar.js"></script>
+<script src="js/seed.js"></script>
+<script src="js/refresh.js"></script>
+
+<script>
+// ── Shoot type toggle buttons ──────────────────────────────────────────────
+function selectShootType(btn) {
+  document.querySelectorAll('.shoot-type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('shoot-type').value = btn.getAttribute('data-val');
+}
+
+// Reset type buttons when shoot modal opens
+(function patchShootModal() {
+  const _origClose = closeModal;
+  closeModal = function(type) {
+    _origClose(type);
+    if (type === 'shoot') {
+      // Reset type row to "shoot" default
+      document.querySelectorAll('.shoot-type-btn').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-val') === 'shoot');
+      });
+      document.getElementById('shoot-type').value = 'shoot';
+      const timeEl = document.getElementById('shoot-time');
+      if (timeEl) timeEl.value = '';
+    }
+  };
+})();
+
+// ── Resizable two-column panels ────────────────────────────────────────────
+(function initResizableCols() {
+  document.querySelectorAll('.col-divider').forEach(handle => {
+    handle.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      const container  = handle.parentElement;
+      const leftCol    = handle.previousElementSibling;
+      const rightCol   = handle.nextElementSibling;
+      const startX     = e.clientX;
+      const leftStart  = leftCol.getBoundingClientRect().width;
+
+      document.body.style.cursor    = 'col-resize';
+      document.body.style.userSelect = 'none';
+
+      function onMove(e) {
+        const handleW   = handle.offsetWidth;
+        const containerW = container.getBoundingClientRect().width - handleW;
+        const delta      = e.clientX - startX;
+        const newPct     = Math.max(15, Math.min(85, (leftStart + delta) / containerW * 100));
+        leftCol.style.flex  = '0 0 ' + newPct.toFixed(1) + '%';
+        rightCol.style.flex = '1';
+      }
+
+      function onUp() {
+        document.body.style.cursor     = '';
+        document.body.style.userSelect = '';
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup',   onUp);
+      }
+
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup',   onUp);
+    });
+  });
+})();
+
+// ── Resizable sidebar ──────────────────────────────────────────────────────
+(function initSidebarResize() {
+  const handle  = document.getElementById('sidebar-handle');
+  const sidebar = document.getElementById('sidebar');
+  if (!handle || !sidebar) return;
+
+  handle.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    const startX     = e.clientX;
+    const startWidth = sidebar.getBoundingClientRect().width;
+
+    document.body.style.cursor    = 'col-resize';
+    document.body.style.userSelect = 'none';
+
+    function onMove(e) {
+      const newWidth = Math.max(100, Math.min(400, startWidth + (e.clientX - startX)));
+      sidebar.style.flex = '0 0 ' + newWidth + 'px';
+    }
+
+    function onUp() {
+      document.body.style.cursor     = '';
+      document.body.style.userSelect = '';
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup',   onUp);
+    }
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup',   onUp);
+  });
+})();
+</script>
+
 </body>
 </html>
