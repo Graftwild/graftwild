@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Graft Wild</title>
+  <title>Graftwild</title>
   <meta name="description" content="Land. Water. Performance. Fishing, homesteading, and wild food with Stryder Graft." />
   <link rel="stylesheet" href="assets/style.css" />
   <style>
@@ -14,14 +14,7 @@
       padding: 1.25rem 2.5rem;
       background: linear-gradient(to bottom, rgba(19,15,8,0.95), transparent);
     }
-    .nav-logo {
-      font-family: var(--font-heading);
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text);
-    }
+    .nav-logo-img { height: 45px; width: auto; display: block; }
     .nav-links { display: flex; gap: 2rem; list-style: none; }
     .nav-links a {
       font-size: 0.8rem;
@@ -60,24 +53,16 @@
       opacity: 0.35;
     }
     .hero-content { position: relative; z-index: 1; padding: 0 1.5rem; }
-    .hero-eyebrow {
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1.25rem;
-    }
     .hero-title {
       font-family: var(--font-heading);
       font-size: clamp(3.5rem, 10vw, 8rem);
       font-weight: 900;
-      line-height: 0.9;
+      line-height: 1;
       letter-spacing: -0.02em;
       color: var(--text);
       margin-bottom: 1.5rem;
     }
-    .hero-title span { color: var(--gold); }
+    .hero-logo-img { width: clamp(280px, 50vw, 600px); height: auto; margin-bottom: 1.5rem; }
     .hero-tagline {
       font-size: 0.85rem;
       font-weight: 300;
@@ -270,20 +255,6 @@
       line-height: 1.9;
     }
     .about-strip p strong { color: var(--text); font-weight: 600; }
-    .about-strip .ig-link {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      margin-top: 2rem;
-      padding: 0.7rem 1.5rem;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      font-size: 0.75rem;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .about-strip .ig-link:hover { border-color: var(--gold); color: var(--gold); }
 
     /* ── Footer ──────────────────────────────────────────── */
     footer {
@@ -325,12 +296,11 @@
 
   <!-- Nav -->
   <nav>
-    <span class="nav-logo">Graft Wild</span>
+    <a href="/"><img src="/assets/images/graftwild-logo.png" alt="Graftwild" class="nav-logo-img"></a>
     <ul class="nav-links">
       <li><a href="#values">Values</a></li>
       <li><a href="/shop">Shop</a></li>
       <li><a href="#products">Gear</a></li>
-      <li><a href="https://instagram.com/stryder.g" target="_blank" rel="noopener">Instagram</a></li>
       <li><a href="/cart">Cart <span id="cart-count" style="color:var(--gold)"></span></a></li>
     </ul>
   </nav>
@@ -339,8 +309,7 @@
   <section class="hero">
     <div class="hero-bg"></div>
     <div class="hero-content">
-      <p class="hero-eyebrow">@stryder.g</p>
-      <h1 class="hero-title">Graft<br /><span>Wild</span></h1>
+      <img src="/assets/images/graftwild-logo.png" alt="Graftwild" class="hero-logo-img">
       <p class="hero-tagline">
         <strong>Land</strong> &nbsp;|&nbsp; <strong>Water</strong> &nbsp;|&nbsp; <strong>Performance</strong>
       </p>
@@ -460,21 +429,17 @@
     <div class="about-inner">
       <p>
         I'm <strong>Stryder Graft</strong> — fishing guide, homesteader, wild food forager.
-        I built Graft Wild to share what I actually do, not what looks good on camera.
+        I built Graftwild to share what I actually do, not what looks good on camera.
         <strong>No sponsorships without genuine use.</strong> No filler content.
       </p>
-      <a href="https://instagram.com/stryder.g" target="_blank" rel="noopener" class="ig-link">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
-        Follow @stryder.g
-      </a>
     </div>
   </section>
 
   <!-- Footer -->
   <footer>
-    <span class="footer-logo">Graft Wild</span>
+    <span class="footer-logo">Graftwild</span>
     <p>Partnerships: <a href="mailto:partnerships@graftwild.com">partnerships@graftwild.com</a></p>
-    <p>&copy; 2026 Graft Wild</p>
+    <p>&copy; 2026 Graftwild</p>
   </footer>
 
 <script>
