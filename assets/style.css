@@ -1,32 +1,32 @@
-/* Graft Wild — Shared Base Styles */
+/* Graftwild — Shared Base Styles */
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --black:      #130f08;
-  --black-soft: #1c160c;
-  --black-card: #241c10;
-  --border:     #3c2e1a;
-  --green-dark: #1e2e16;
+  --black:      #F5F0E8;
+  --black-soft: #EDE8DB;
+  --black-card: #FFFFFF;
+  --border:     #D4CEC2;
+  --green-dark: #E8F0DC;
   --green:      #2c4220;
   --green-mid:  #3e5c2c;
   --green-light:#6a9448;
-  --gold:       #9e7832;
-  --gold-light: #b8924a;
-  --gold-pale:  #ceaa6c;
-  --text:       #ede8d8;
-  --text-muted: #9a8e7a;
-  --text-dim:   #6a5c48;
+  --gold:       #6B7C45;
+  --gold-light: #7A8F52;
+  --gold-pale:  #A8B890;
+  --text:       #1C1F17;
+  --text-muted: #6B7062;
+  --text-dim:   #9A9590;
 
   --font-heading: 'Playfair Display', Georgia, serif;
   --font-body:    'Inter', system-ui, sans-serif;
 
   --radius:   6px;
   --radius-lg: 12px;
-  --shadow:   0 2px 12px rgba(0,0,0,0.4);
-  --shadow-lg:0 8px 32px rgba(0,0,0,0.6);
+  --shadow:   0 2px 12px rgba(0,0,0,0.08);
+  --shadow-lg:0 8px 32px rgba(0,0,0,0.14);
 }
 
 html { scroll-behavior: smooth; }
@@ -43,9 +43,11 @@ body {
 a { color: var(--gold); text-decoration: none; }
 a:hover { color: var(--gold-light); }
 
+h1, h2, h3, h4, h5, h6 { color: var(--text); }
+
 img { display: block; max-width: 100%; }
 
-::selection { background: var(--gold); color: var(--black); }
+::selection { background: var(--gold); color: #FFFFFF; }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
