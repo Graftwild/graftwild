@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shop — Graft Wild</title>
+  <title>Shop — Graftwild</title>
   <meta name="description" content="Laser engraved hardwood cutting boards. Built for the kitchen, the camp, or the fish house." />
   <link rel="stylesheet" href="/assets/style.css" />
   <style>
@@ -12,20 +12,22 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
       padding: 1.25rem 2.5rem;
-      background: rgba(19,15,8,0.97);
+      background: #FFFFFF;
       border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 8px rgba(0,0,0,0.06);
     }
     .nav-logo {
       font-family: var(--font-heading);
       font-size: 1.1rem; font-weight: 700;
       letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text); text-decoration: none;
+      color: #1C1F17; text-decoration: none;
     }
     .nav-links { display: flex; gap: 2rem; list-style: none; }
     .nav-links a {
+      font-family: var(--font-heading);
       font-size: 0.8rem; font-weight: 500;
       letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--text-muted); transition: color 0.2s;
+      color: #1C1F17; transition: color 0.2s;
     }
     .nav-links a:hover, .nav-links a.active { color: var(--gold); }
 
@@ -33,7 +35,7 @@
     .page-header {
       padding: 7rem 2.5rem 3rem;
       text-align: center;
-      background: linear-gradient(to bottom, #17120a, var(--black));
+      background: var(--black);
       border-bottom: 1px solid var(--border);
     }
     .page-header-eyebrow {
@@ -192,11 +194,10 @@
 <body>
 
 <nav>
-  <a class="nav-logo" href="/">Graft Wild</a>
+  <a class="nav-logo" href="/">Graftwild</a>
   <ul class="nav-links">
     <li><a href="/">Home</a></li>
     <li><a href="/shop" class="active">Shop</a></li>
-    <li><a href="https://www.instagram.com/stryder.g/" target="_blank" rel="noopener">Instagram</a></li>
     <li><a href="/cart">Cart <span id="cart-count" style="color:var(--gold)"></span></a></li>
   </ul>
 </nav>
@@ -214,8 +215,8 @@
 </main>
 
 <footer>
-  <span class="footer-logo">Graft Wild</span>
-  <p>© 2026 Graft Wild. Florida Keys.</p>
+  <span class="footer-logo">Graftwild</span>
+  <p>© 2026 Graftwild. Florida Keys.</p>
   <p><a href="mailto:partnerships@graftwild.com" style="color:var(--text-dim)">partnerships@graftwild.com</a></p>
 </footer>
 
