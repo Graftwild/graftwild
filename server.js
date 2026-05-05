@@ -20,6 +20,7 @@ try {
 } catch { /* .env optional */ }
 
 // ─── Stripe ───────────────────────────────────────────────────────────────────
+const nodemailer = require('nodemailer');
 const Stripe = require('stripe');
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY || '');
 
@@ -32,8 +33,9 @@ const PORT          = process.env.PORT || 3000;
 const DASHBOARD_PW  = process.env.DASHBOARD_PASSWORD || 'graftwild2026';
 const STATIC_ROOT   = __dirname;
 const IG_TOOL_DIR   = path.join(__dirname, 'ig-tool');
-const PRODUCTS_FILE = path.join(__dirname, 'data', 'products.json');
-const ORDERS_FILE   = path.join(__dirname, 'data', 'orders.json');
+const PRODUCTS_FILE     = path.join(__dirname, 'data', 'products.json');
+const ORDERS_FILE       = path.join(__dirname, 'data', 'orders.json');
+const SUBSCRIBERS_FILE  = path.join(__dirname, 'data', 'subscribers.json');
 const REFRESH_MS    = 12 * 60 * 60 * 1000;     // 12 hours
 
 // ─── Content Studio paths ──────────────────────────────────────────────────────
@@ -622,6 +624,76 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // ── POST /api/subscribe ────────────────────────────────────────────────────
+  if (method === 'POST' && urlPath === '/api/subscribe') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', async () => {
+      try {
+        const { email } = JSON.parse(body);
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          return json(res, 400, { ok: false, error: 'Invalid email address' });
+        }
+
+        // Save subscriber (skip duplicates)
+        const subscribers = readJSON(SUBSCRIBERS_FILE) || [];
+        if (!subscribers.some(s => s.email.toLowerCase() === email.toLowerCase())) {
+          subscribers.push({ email, subscribedAt: new Date().toISOString() });
+          writeJSON(SUBSCRIBERS_FILE, subscribers);
+        }
+
+        // Send WILD10 email
+        const transporter = nodemailer.createTransport({
+          host:   process.env.SMTP_HOST,
+          port:   parseInt(process.env.SMTP_PORT || '587'),
+          secure: process.env.SMTP_PORT === '465',
+          auth:   { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+        });
+
+        await transporter.sendMail({
+          from:    process.env.SMTP_FROM || 'Graftwild <partnerships@graftwild.com>',
+          to:      email,
+          subject: 'Your 10% off — welcome to the wild side.',
+          html: `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#1C1F17;font-family:Georgia,serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#1C1F17;padding:48px 24px;">
+    <tr><td align="center">
+      <table width="100%" style="max-width:520px;">
+        <tr><td style="padding-bottom:32px;border-bottom:1px solid rgba(245,240,232,0.1);">
+          <p style="margin:0;font-family:Arial,sans-serif;font-size:11px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:rgba(245,240,232,0.4);">GRAFTWILD</p>
+        </td></tr>
+        <tr><td style="padding:40px 0 24px;">
+          <h1 style="margin:0 0 16px;font-family:Georgia,serif;font-size:36px;font-weight:300;line-height:1.15;color:#F5F0E8;letter-spacing:-0.02em;">Welcome to<br><em>the wild side.</em></h1>
+          <p style="margin:0;font-family:Arial,sans-serif;font-size:14px;font-weight:300;line-height:1.7;color:rgba(245,240,232,0.55);">Here's your 10% off code for your first order. Use it at checkout — no expiry, no fine print.</p>
+        </td></tr>
+        <tr><td style="padding:24px 0 40px;">
+          <div style="display:inline-block;border:1px solid rgba(245,240,232,0.35);padding:18px 36px;text-align:center;">
+            <p style="margin:0 0 6px;font-family:Arial,sans-serif;font-size:10px;font-weight:500;letter-spacing:0.25em;text-transform:uppercase;color:rgba(245,240,232,0.35);">Your discount code</p>
+            <p style="margin:0;font-family:Georgia,serif;font-size:32px;font-weight:400;letter-spacing:0.12em;color:#F5F0E8;">WILD10</p>
+          </div>
+        </td></tr>
+        <tr><td style="padding-top:32px;border-top:1px solid rgba(245,240,232,0.08);">
+          <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;font-weight:300;line-height:1.7;color:rgba(245,240,232,0.25);">Big Pine Key, Florida Keys &nbsp;·&nbsp; <a href="https://graftwild.com" style="color:rgba(245,240,232,0.35);">graftwild.com</a></p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`,
+        });
+
+        console.log(`[subscribe] Sent WILD10 to ${email}`);
+        return json(res, 200, { ok: true });
+      } catch (e) {
+        console.error('[subscribe] error:', e.message);
+        return json(res, 500, { ok: false, error: 'Could not send email — check SMTP config' });
+      }
+    });
+    return;
+  }
+
   // ── Static files ───────────────────────────────────────────────────────────
   serveStatic(req, res);
 });
@@ -676,7 +748,7 @@ async function studioRunClaudeAnalysis({ outputDir, baseName, title, segments, r
 }
 
 server.listen(PORT, () => {
-  console.log(`\nGraft Wild server running at http://localhost:${PORT}`);
+  console.log(`\nGraftwild server running at http://localhost:${PORT}`);
   console.log(`  Public site : http://localhost:${PORT}`);
   console.log(`  Dashboard   : http://localhost:${PORT}/dashboard`);
   console.log(`  Shop        : http://localhost:${PORT}/shop`);
