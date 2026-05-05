@@ -3,44 +3,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Checkout — Graft Wild</title>
-  <link rel="stylesheet" href="/assets/style.css" />
+  <title>Checkout — Graftwild</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --forest: #2C3B2A;
+      --cream:  #F5F0E8;
+      --black:  #1C1F17;
+      --olive:  #6B7C45;
+      --sand:   #C4A882;
+      --bark:   #7D5A3C;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--cream);
+      color: var(--black);
+      min-height: 100vh;
+    }
+
     /* ── Nav ─────────────────────────────────────────────── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
       padding: 1.25rem 2.5rem;
-      background: rgba(19,15,8,0.97);
-      border-bottom: 1px solid var(--border);
+      background: var(--black);
     }
     .nav-logo {
-      font-family: var(--font-heading);
-      font-size: 1.1rem; font-weight: 700;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text); text-decoration: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--cream); text-decoration: none;
     }
     .nav-secure {
-      font-size: 0.72rem; font-weight: 500;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--text-dim);
+      font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(245,240,232,0.4);
     }
 
     /* ── Page layout ─────────────────────────────────────── */
     .checkout-page {
       max-width: 1000px; margin: 0 auto;
-      padding: 6.5rem 2rem 6rem;
+      padding: 6.5rem 2rem 7rem;
       display: grid;
-      grid-template-columns: 1fr 360px;
-      gap: 3.5rem;
+      grid-template-columns: 1fr 340px;
+      gap: 4rem;
       align-items: start;
     }
 
     /* ── Section headings ────────────────────────────────── */
     .section-title {
-      font-size: 0.7rem; font-weight: 600;
+      font-size: 0.68rem; font-weight: 600;
       letter-spacing: 0.25em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 1.25rem;
+      color: var(--olive); margin-bottom: 1.25rem;
     }
 
     /* ── Form ────────────────────────────────────────────── */
@@ -53,32 +72,30 @@
     .form-row.full { grid-template-columns: 1fr; }
     .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.75rem; }
     .form-group label {
-      font-size: 0.7rem; font-weight: 600;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--text-muted);
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: rgba(28,31,23,0.5);
     }
     .form-input {
-      padding: 0.75rem 1rem;
-      background: var(--black-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text);
-      font-family: var(--font-body); font-size: 0.9rem;
+      padding: 0.8rem 1rem;
+      background: rgba(255,255,255,0.65);
+      border: 1px solid rgba(28,31,23,0.18);
+      color: var(--black);
+      font-family: 'Inter', sans-serif; font-size: 0.9rem;
       outline: none; transition: border-color 0.2s;
-      width: 100%; box-sizing: border-box;
+      width: 100%;
     }
-    .form-input:focus { border-color: var(--gold); }
+    .form-input:focus { border-color: var(--olive); }
     .form-input.error { border-color: #c85a2a; }
 
     /* ── Stripe card element container ───────────────────── */
     .stripe-wrap {
-      padding: 0.85rem 1rem;
-      background: var(--black-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      padding: 0.9rem 1rem;
+      background: rgba(255,255,255,0.65);
+      border: 1px solid rgba(28,31,23,0.18);
       transition: border-color 0.2s;
     }
-    .stripe-wrap.focused { border-color: var(--gold); }
+    .stripe-wrap.focused { border-color: var(--olive); }
     #stripe-error {
       margin-top: 0.6rem;
       font-size: 0.78rem; color: #c85a2a;
@@ -87,27 +104,27 @@
 
     /* ── Divider ─────────────────────────────────────────── */
     .form-divider {
-      border: none; border-top: 1px solid var(--border);
+      border: none; border-top: 1px solid rgba(28,31,23,0.1);
       margin: 1.75rem 0;
     }
 
     /* ── Submit button ───────────────────────────────────── */
     .btn-place-order {
       width: 100%; padding: 1.1rem;
-      background: var(--gold); color: var(--black);
-      border: none; border-radius: var(--radius);
-      font-family: var(--font-body);
-      font-size: 0.85rem; font-weight: 700;
-      letter-spacing: 0.18em; text-transform: uppercase;
+      background: var(--forest); color: var(--cream);
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.2em; text-transform: uppercase;
       cursor: pointer; transition: background 0.2s;
       display: flex; align-items: center; justify-content: center; gap: 0.5rem;
     }
-    .btn-place-order:hover:not(:disabled) { background: var(--gold-light); }
+    .btn-place-order:hover:not(:disabled) { background: #1a2418; }
     .btn-place-order:disabled { opacity: 0.5; cursor: default; }
     .spinner {
       width: 1rem; height: 1rem;
-      border: 2px solid rgba(19,15,8,0.3);
-      border-top-color: var(--black);
+      border: 2px solid rgba(245,240,232,0.3);
+      border-top-color: var(--cream);
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
       display: none;
@@ -119,85 +136,90 @@
     }
     .secure-note {
       text-align: center; margin-top: 0.75rem;
-      font-size: 0.7rem; color: var(--text-dim);
-      letter-spacing: 0.05em;
+      font-size: 0.7rem; color: rgba(28,31,23,0.38);
+      letter-spacing: 0.04em;
     }
 
     /* ── Order summary sidebar ───────────────────────────── */
     .order-summary {
-      background: var(--black-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
+      background: var(--forest);
       padding: 1.75rem;
       position: sticky; top: 5.5rem;
     }
+    .order-summary .section-title { color: rgba(245,240,232,0.5); }
     .summary-items { margin-bottom: 1.25rem; }
     .summary-item {
       display: flex; justify-content: space-between;
       align-items: flex-start; gap: 1rem;
       padding: 0.85rem 0;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid rgba(245,240,232,0.1);
     }
     .summary-item:last-child { border-bottom: none; }
     .summary-item-info { flex: 1; min-width: 0; }
     .summary-item-name {
       font-size: 0.85rem; font-weight: 600;
-      color: var(--text); margin-bottom: 0.2rem;
+      color: var(--cream); margin-bottom: 0.2rem;
     }
     .summary-item-meta {
-      font-size: 0.7rem; color: var(--text-dim);
+      font-size: 0.7rem; color: rgba(245,240,232,0.4);
       line-height: 1.5;
     }
     .summary-item-engraving {
-      font-size: 0.68rem; color: var(--gold);
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.8rem; color: rgba(107,124,69,0.9);
     }
     .summary-item-price {
-      font-size: 0.9rem; font-weight: 600;
-      color: var(--gold-pale); flex-shrink: 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; font-weight: 600;
+      color: var(--cream); flex-shrink: 0;
     }
     .summary-totals { margin-top: 0.5rem; }
     .summary-row {
       display: flex; justify-content: space-between;
-      font-size: 0.82rem; color: var(--text-muted);
+      font-size: 0.82rem; color: rgba(245,240,232,0.55);
       margin-bottom: 0.5rem;
     }
     .summary-row.total {
-      font-size: 1rem; font-weight: 700;
-      color: var(--text); margin-top: 0.75rem;
-      padding-top: 0.75rem; border-top: 1px solid var(--border);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; font-weight: 600;
+      color: var(--cream); margin-top: 0.75rem;
+      padding-top: 0.75rem; border-top: 1px solid rgba(245,240,232,0.15);
     }
     .empty-cart-msg {
       padding: 4rem 2rem; text-align: center;
-      color: var(--text-muted); grid-column: 1/-1;
+      color: rgba(28,31,23,0.5); grid-column: 1/-1;
     }
-    .empty-cart-msg a { color: var(--gold); }
+    .empty-cart-msg a { color: var(--olive); }
 
     /* ── Footer ──────────────────────────────────────────── */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem 2.5rem;
+      background: var(--black);
+      padding: 2.25rem 2.5rem;
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 1rem;
     }
     .footer-logo {
-      font-family: var(--font-heading); font-size: 0.95rem;
-      font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text-dim);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(245,240,232,0.4);
     }
-    footer p { font-size: 0.75rem; color: var(--text-dim); }
+    footer p { font-size: 0.73rem; color: rgba(245,240,232,0.35); letter-spacing: 0.04em; }
 
     @media (max-width: 768px) {
       nav { padding: 1rem 1.25rem; }
-      .checkout-page { grid-template-columns: 1fr; gap: 2rem; padding: 5.5rem 1.25rem 4rem; }
+      .checkout-page { grid-template-columns: 1fr; gap: 2.5rem; padding: 5.5rem 1.25rem 4.5rem; }
       .order-summary { position: static; order: -1; }
       .form-row { grid-template-columns: 1fr; }
+      footer { padding: 2rem 1.25rem; }
     }
   </style>
 </head>
 <body>
 
 <nav>
-  <a class="nav-logo" href="/">Graft Wild</a>
+  <a class="nav-logo" href="/">Graftwild</a>
   <span class="nav-secure">🔒 Secure Checkout</span>
 </nav>
 
@@ -206,14 +228,12 @@
 </div>
 
 <footer>
-  <span class="footer-logo">Graft Wild</span>
-  <p>© 2026 Graft Wild. Florida Keys.</p>
-  <p>Payments secured by Stripe</p>
+  <span class="footer-logo">Graftwild</span>
+  <p>© 2026 Graftwild · Payments secured by Stripe</p>
 </footer>
 
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-  // ── Helpers ─────────────────────────────────────────────
   function getCart() {
     try { return JSON.parse(localStorage.getItem('gw_cart') || '[]'); } catch { return []; }
   }
@@ -221,11 +241,10 @@
 
   const cart = getCart();
 
-  // ── Empty cart guard ─────────────────────────────────────
   if (!cart.length) {
     document.getElementById('checkout-page').innerHTML = `
       <div class="empty-cart-msg">
-        <p>Your cart is empty. <a href="/shop">Back to shop →</a></p>
+        <p>Your cart is empty. <a href="/">Back to home →</a></p>
       </div>`;
   } else {
     buildCheckout();
@@ -234,7 +253,6 @@
   async function buildCheckout() {
     const subtotal = cart.reduce((s, i) => s + i.price * (i.qty || 1), 0);
 
-    // ── Order summary HTML ─────────────────────────────────
     const summaryItemsHtml = cart.map(item => `
       <div class="summary-item">
         <div class="summary-item-info">
@@ -245,7 +263,6 @@
         <div class="summary-item-price">${formatPrice(item.price * (item.qty || 1))}</div>
       </div>`).join('');
 
-    // ── Render full page ───────────────────────────────────
     document.getElementById('checkout-page').innerHTML = `
       <div class="checkout-form">
         <div class="form-section">
@@ -313,7 +330,7 @@
           <span id="btn-label">Place Order — ${formatPrice(subtotal)}</span>
         </button>
         <div class="submit-error" id="submit-error"></div>
-        <p class="secure-note">Your payment is encrypted and secured by Stripe. We never see your card number.</p>
+        <p class="secure-note">Your payment is encrypted and secured by Stripe.</p>
       </div>
 
       <div class="order-summary">
@@ -326,10 +343,8 @@
         </div>
       </div>`;
 
-    // ── Init Stripe ────────────────────────────────────────
     let publishableKey;
     try {
-      // Get publishable key + clientSecret from server
       const intentRes = await fetch('/api/create-payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -356,12 +371,12 @@
       const cardElement = elements.create('card', {
         style: {
           base: {
-            color: '#ede8d8',
+            color: '#1C1F17',
             fontFamily: 'Inter, sans-serif',
             fontSize: '15px',
             fontSmoothing: 'antialiased',
-            '::placeholder': { color: '#6a5c48' },
-            iconColor: '#9e7832',
+            '::placeholder': { color: 'rgba(28,31,23,0.35)' },
+            iconColor: '#6B7C45',
           },
           invalid: { color: '#c85a2a', iconColor: '#c85a2a' },
         },
@@ -375,14 +390,12 @@
         document.getElementById('stripe-error').textContent = e.error ? e.error.message : '';
       });
 
-      // ── Submit ─────────────────────────────────────────────
       document.getElementById('btn-place-order').addEventListener('click', async () => {
         const btn     = document.getElementById('btn-place-order');
         const spinner = document.getElementById('spinner');
         const label   = document.getElementById('btn-label');
         const errEl   = document.getElementById('submit-error');
 
-        // Basic validation
         const email  = document.getElementById('cust-email').value.trim();
         const first  = document.getElementById('cust-first').value.trim();
         const last   = document.getElementById('cust-last').value.trim();
@@ -426,7 +439,6 @@
           spinner.style.display = 'none';
           label.textContent = `Place Order — ${formatPrice(subtotal)}`;
         } else if (paymentIntent.status === 'succeeded') {
-          // Store name/email for success page, clear cart
           localStorage.setItem('gw_last_order', JSON.stringify({
             name:  `${first} ${last}`,
             email,

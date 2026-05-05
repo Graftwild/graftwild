@@ -3,249 +3,260 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cart — Graft Wild</title>
-  <link rel="stylesheet" href="/assets/style.css" />
+  <title>Cart — Graftwild</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --forest: #2C3B2A;
+      --cream:  #F5F0E8;
+      --black:  #1C1F17;
+      --olive:  #6B7C45;
+      --sand:   #C4A882;
+      --bark:   #7D5A3C;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--cream);
+      color: var(--black);
+      min-height: 100vh;
+    }
+
     /* ── Nav ─────────────────────────────────────────────── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
       padding: 1.25rem 2.5rem;
-      background: rgba(19,15,8,0.97);
-      border-bottom: 1px solid var(--border);
+      background: var(--black);
     }
     .nav-logo {
-      font-family: var(--font-heading);
-      font-size: 1.1rem; font-weight: 700;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text); text-decoration: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--cream); text-decoration: none;
     }
     .nav-links { display: flex; gap: 2rem; list-style: none; }
     .nav-links a {
-      font-size: 0.8rem; font-weight: 500;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--text-muted); transition: color 0.2s; text-decoration: none;
+      font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(245,240,232,0.55); transition: color 0.2s; text-decoration: none;
     }
-    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+    .nav-links a:hover, .nav-links a.active { color: var(--cream); }
 
-    /* ── Page ────────────────────────────────────────────── */
+    /* ── Page header ─────────────────────────────────────── */
     .page-header {
-      padding: 7rem 2.5rem 2.5rem;
-      border-bottom: 1px solid var(--border);
-      background: linear-gradient(to bottom, #17120a, var(--black));
+      padding: 7rem 2.5rem 2.75rem;
+      background: var(--black);
     }
     .page-header-eyebrow {
-      font-size: 0.7rem; font-weight: 500;
-      letter-spacing: 0.35em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 0.5rem;
+      font-size: 0.68rem; font-weight: 500;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--olive); margin-bottom: 0.6rem;
     }
     .page-header h1 {
-      font-family: var(--font-heading);
+      font-family: 'Cormorant Garamond', serif;
       font-size: clamp(2rem, 5vw, 3.5rem);
-      font-weight: 900; color: var(--text);
+      font-weight: 600; letter-spacing: -0.02em;
+      color: var(--cream);
     }
 
     /* ── Cart layout ─────────────────────────────────────── */
     .cart-page {
       max-width: 900px; margin: 0 auto;
-      padding: 3rem 2rem 6rem;
+      padding: 3rem 2rem 7rem;
       display: grid;
-      grid-template-columns: 1fr 320px;
+      grid-template-columns: 1fr 300px;
       gap: 3rem;
       align-items: start;
     }
 
     /* ── Line items ──────────────────────────────────────── */
-    .cart-items { display: flex; flex-direction: column; gap: 1rem; }
+    .cart-items { display: flex; flex-direction: column; gap: 1px; }
     .cart-item {
       display: grid;
-      grid-template-columns: 90px 1fr auto;
+      grid-template-columns: 80px 1fr auto;
       gap: 1.25rem;
       align-items: center;
-      padding: 1.25rem;
-      background: var(--black-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
+      padding: 1.5rem 0;
+      border-bottom: 1px solid rgba(28,31,23,0.1);
     }
-    .item-img {
-      width: 90px; height: 68px;
-      object-fit: cover; border-radius: var(--radius);
-      background: var(--black-soft);
-    }
+    .cart-item:first-child { border-top: 1px solid rgba(28,31,23,0.1); }
     .item-img-placeholder {
-      width: 90px; height: 68px;
-      background: linear-gradient(135deg, #1c160c, #241c10);
-      border-radius: var(--radius);
+      width: 80px; height: 62px;
+      background: linear-gradient(135deg, #e4dcd0, #d8cebd);
       display: flex; align-items: center; justify-content: center;
     }
-    .item-img-placeholder span {
-      font-size: 0.55rem; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--text-dim);
-    }
+    .item-img-placeholder svg { opacity: 0.3; }
     .item-details { min-width: 0; }
     .item-name {
-      font-family: var(--font-heading);
-      font-size: 1rem; font-weight: 700;
-      color: var(--text); margin-bottom: 0.2rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-weight: 600;
+      color: var(--black); margin-bottom: 0.2rem;
+      letter-spacing: -0.01em;
     }
     .item-meta {
-      font-size: 0.72rem; color: var(--text-dim);
+      font-size: 0.72rem; color: rgba(28,31,23,0.45);
       letter-spacing: 0.05em; margin-bottom: 0.5rem;
       line-height: 1.6;
     }
     .item-engraving {
       display: inline-block;
-      font-size: 0.7rem; color: var(--gold);
-      background: rgba(158,120,50,0.1);
-      border: 1px solid rgba(158,120,50,0.2);
-      border-radius: var(--radius);
-      padding: 0.15rem 0.5rem;
-      letter-spacing: 0.05em;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.82rem; color: var(--olive);
+      border: 1px solid rgba(107,124,69,0.3);
+      padding: 0.15rem 0.55rem;
+      letter-spacing: 0.03em;
     }
     .item-actions {
       display: flex; flex-direction: column;
       align-items: flex-end; gap: 0.75rem;
     }
     .item-price {
-      font-size: 1.1rem; font-weight: 700;
-      color: var(--gold-pale);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; font-weight: 600;
+      color: var(--black);
     }
     .item-qty {
       display: flex; align-items: center; gap: 0.5rem;
     }
     .qty-btn {
-      width: 1.9rem; height: 1.9rem;
-      background: var(--black-soft);
-      border: 1px solid var(--border);
-      color: var(--text); font-size: 1rem;
-      border-radius: var(--radius); cursor: pointer;
+      width: 1.85rem; height: 1.85rem;
+      background: transparent;
+      border: 1px solid rgba(28,31,23,0.2);
+      color: var(--black); font-size: 1rem;
+      cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      transition: border-color 0.15s;
+      transition: border-color 0.18s;
     }
-    .qty-btn:hover { border-color: var(--gold); }
+    .qty-btn:hover { border-color: var(--olive); }
     .qty-num {
       font-size: 0.9rem; font-weight: 600;
-      color: var(--text); min-width: 1.25rem; text-align: center;
+      color: var(--black); min-width: 1.25rem; text-align: center;
     }
     .btn-remove {
       background: none; border: none;
-      font-size: 0.7rem; font-weight: 500;
+      font-size: 0.68rem; font-weight: 500;
       letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--text-dim); cursor: pointer;
+      color: rgba(28,31,23,0.35); cursor: pointer;
       transition: color 0.15s; padding: 0;
     }
     .btn-remove:hover { color: #c85a2a; }
 
     /* ── Empty state ─────────────────────────────────────── */
     .cart-empty {
-      padding: 4rem 0; text-align: center;
-      color: var(--text-muted);
+      padding: 5rem 0; text-align: center;
+      color: rgba(28,31,23,0.5);
       grid-column: 1 / -1;
     }
     .cart-empty h2 {
-      font-family: var(--font-heading);
-      font-size: 1.5rem; font-weight: 700;
-      color: var(--text); margin-bottom: 0.75rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.75rem; font-weight: 600;
+      color: var(--black); margin-bottom: 0.75rem;
+      letter-spacing: -0.01em;
     }
-    .cart-empty p { font-size: 0.9rem; margin-bottom: 2rem; }
+    .cart-empty p { font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.7; }
     .btn-shop {
       display: inline-block;
-      padding: 0.8rem 2rem;
-      border: 1px solid var(--gold);
-      color: var(--gold);
-      font-family: var(--font-body);
+      padding: 0.85rem 2.25rem;
+      background: var(--forest);
+      color: var(--cream);
+      font-family: 'Inter', sans-serif;
       font-size: 0.75rem; font-weight: 600;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      border-radius: var(--radius); text-decoration: none;
-      transition: background 0.2s, color 0.2s;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      text-decoration: none;
+      transition: background 0.2s;
     }
-    .btn-shop:hover { background: var(--gold); color: var(--black); }
+    .btn-shop:hover { background: #1a2418; }
 
     /* ── Order summary ───────────────────────────────────── */
     .order-summary {
-      background: var(--black-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
+      background: var(--forest);
       padding: 1.75rem;
       position: sticky; top: 5.5rem;
     }
     .summary-title {
-      font-size: 0.72rem; font-weight: 600;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text-muted); margin-bottom: 1.25rem;
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(245,240,232,0.55); margin-bottom: 1.5rem;
     }
     .summary-row {
       display: flex; justify-content: space-between;
       align-items: baseline;
-      font-size: 0.85rem; color: var(--text-muted);
-      margin-bottom: 0.6rem;
+      font-size: 0.82rem; color: rgba(245,240,232,0.6);
+      margin-bottom: 0.65rem;
     }
     .summary-row.total {
-      font-size: 1.1rem; font-weight: 700;
-      color: var(--text); margin-top: 1rem;
-      padding-top: 1rem; border-top: 1px solid var(--border);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem; font-weight: 600;
+      color: var(--cream); margin-top: 1.1rem;
+      padding-top: 1.1rem; border-top: 1px solid rgba(245,240,232,0.15);
     }
     .summary-note {
-      font-size: 0.72rem; color: var(--text-dim);
-      line-height: 1.6; margin: 1rem 0;
+      font-size: 0.7rem; color: rgba(245,240,232,0.35);
+      line-height: 1.65; margin: 1rem 0 1.5rem;
     }
     .btn-checkout {
       width: 100%; padding: 1rem;
-      background: var(--gold);
-      color: var(--black); border: none;
-      border-radius: var(--radius);
-      font-family: var(--font-body);
-      font-size: 0.82rem; font-weight: 700;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      cursor: pointer; transition: background 0.2s;
+      background: var(--cream);
+      color: var(--forest); border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      cursor: pointer;
       text-decoration: none; display: block; text-align: center;
+      transition: background 0.2s, color 0.2s;
     }
-    .btn-checkout:hover { background: var(--gold-light); }
-    .btn-checkout.disabled {
-      opacity: 0.4; pointer-events: none;
-    }
+    .btn-checkout:hover { background: #e8e1d6; }
+    .btn-checkout.disabled { opacity: 0.4; pointer-events: none; }
     .btn-continue {
       display: block; text-align: center;
-      margin-top: 0.85rem;
-      font-size: 0.75rem; color: var(--text-dim);
-      text-decoration: none; letter-spacing: 0.05em;
+      margin-top: 1rem;
+      font-size: 0.72rem; color: rgba(245,240,232,0.4);
+      text-decoration: none; letter-spacing: 0.06em;
       transition: color 0.15s;
     }
-    .btn-continue:hover { color: var(--gold); }
+    .btn-continue:hover { color: var(--cream); }
 
     /* ── Footer ──────────────────────────────────────────── */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem 2.5rem;
+      background: var(--black);
+      padding: 2.25rem 2.5rem;
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 1rem;
     }
     .footer-logo {
-      font-family: var(--font-heading); font-size: 0.95rem;
-      font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text-dim);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(245,240,232,0.4);
     }
-    footer p { font-size: 0.75rem; color: var(--text-dim); }
+    footer p { font-size: 0.73rem; color: rgba(245,240,232,0.35); letter-spacing: 0.04em; }
+    footer a { color: rgba(245,240,232,0.35); text-decoration: none; }
+    footer a:hover { color: var(--cream); }
 
     @media (max-width: 768px) {
       nav { padding: 1rem 1.25rem; }
       .nav-links { gap: 1.25rem; }
       .page-header { padding: 5.5rem 1.25rem 2rem; }
-      .cart-page { grid-template-columns: 1fr; gap: 2rem; padding: 2rem 1.25rem 4rem; }
+      .cart-page { grid-template-columns: 1fr; gap: 2rem; padding: 2rem 1.25rem 4.5rem; }
       .order-summary { position: static; }
-      .cart-item { grid-template-columns: 70px 1fr auto; gap: 0.75rem; }
+      .cart-item { grid-template-columns: 60px 1fr auto; gap: 0.75rem; }
+      footer { padding: 2rem 1.25rem; }
     }
   </style>
 </head>
 <body>
 
 <nav>
-  <a class="nav-logo" href="/">Graft Wild</a>
+  <a class="nav-logo" href="/">Graftwild</a>
   <ul class="nav-links">
     <li><a href="/">Home</a></li>
-    <li><a href="/shop">Shop</a></li>
-    <li><a href="https://www.instagram.com/stryder.g/" target="_blank" rel="noopener">Instagram</a></li>
-    <li><a href="/cart" class="active">Cart <span id="cart-count" style="color:var(--gold)"></span></a></li>
+    <li><a href="/cart" class="active">Cart <span id="cart-count"></span></a></li>
   </ul>
 </nav>
 
@@ -257,9 +268,9 @@
 <div id="cart-page" class="cart-page"></div>
 
 <footer>
-  <span class="footer-logo">Graft Wild</span>
-  <p>© 2026 Graft Wild. Florida Keys.</p>
-  <p><a href="mailto:partnerships@graftwild.com" style="color:var(--text-dim)">partnerships@graftwild.com</a></p>
+  <span class="footer-logo">Graftwild</span>
+  <p>© 2026 Graftwild · Big Pine Key, Florida Keys</p>
+  <p><a href="mailto:partnerships@graftwild.com">partnerships@graftwild.com</a></p>
 </footer>
 
 <script>
@@ -284,8 +295,8 @@
       wrap.innerHTML = `
         <div class="cart-empty">
           <h2>Your cart is empty</h2>
-          <p>Head back to the shop and find something worth keeping.</p>
-          <a class="btn-shop" href="/shop">Browse the Shop</a>
+          <p>Head back and find something worth keeping.</p>
+          <a class="btn-shop" href="/">Back to Home</a>
         </div>`;
       return;
     }
@@ -294,7 +305,13 @@
 
     const itemsHtml = cart.map((item, idx) => {
       const lineTotal = item.price * (item.qty || 1);
-      const imgEl = `<div class="item-img-placeholder"><span>Board</span></div>`;
+      const imgEl = `<div class="item-img-placeholder">
+        <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+          <rect x="4" y="10" width="40" height="28" rx="1" stroke="#2C3B2A" stroke-width="1.5" fill="none"/>
+          <line x1="4" y1="18" x2="44" y2="18" stroke="#2C3B2A" stroke-width="0.75" opacity="0.5"/>
+          <line x1="4" y1="24" x2="44" y2="24" stroke="#2C3B2A" stroke-width="0.75" opacity="0.35"/>
+        </svg>
+      </div>`;
       const engravingEl = item.engraving
         ? `<span class="item-engraving">✦ "${item.engraving}"</span>`
         : '';
@@ -303,7 +320,7 @@
           ${imgEl}
           <div class="item-details">
             <div class="item-name">${item.name}</div>
-            <div class="item-meta">${item.size ? item.size + ' · ' : ''}Free engraving</div>
+            <div class="item-meta">${item.size ? item.size + ' · ' : ''}Made in Big Pine Key</div>
             ${engravingEl}
           </div>
           <div class="item-actions">
@@ -318,19 +335,20 @@
         </div>`;
     }).join('');
 
+    const itemCount = cart.reduce((s,i) => s+(i.qty||1), 0);
+
     wrap.innerHTML = `
       <div class="cart-items">${itemsHtml}</div>
       <div class="order-summary">
         <div class="summary-title">Order Summary</div>
-        <div class="summary-row"><span>Subtotal (${cart.reduce((s,i)=>s+(i.qty||1),0)} item${cart.length!==1?'s':''})</span><span>${formatPrice(subtotal)}</span></div>
+        <div class="summary-row"><span>Subtotal (${itemCount} item${itemCount !== 1 ? 's' : ''})</span><span>${formatPrice(subtotal)}</span></div>
         <div class="summary-row"><span>Shipping</span><span>Calculated at checkout</span></div>
         <div class="summary-row total"><span>Estimated Total</span><span>${formatPrice(subtotal)}</span></div>
-        <p class="summary-note">Shipping and taxes calculated at checkout. Each board ships in 5–7 business days.</p>
+        <p class="summary-note">Shipping and taxes calculated at checkout. Ships from Big Pine Key, Florida.</p>
         <a class="btn-checkout" href="/checkout">Proceed to Checkout</a>
-        <a class="btn-continue" href="/shop">← Continue Shopping</a>
+        <a class="btn-continue" href="/">← Continue Shopping</a>
       </div>`;
 
-    // Event delegation
     wrap.addEventListener('click', e => {
       const btn = e.target.closest('[data-action]');
       if (!btn) return;

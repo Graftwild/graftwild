@@ -1,17 +1,45 @@
 [
   {
-    "id": "board-medium",
-    "name": "Graftwild Cutting Board",
-    "subtitle": "12\" × 8\" · End-grain hardwood",
-    "price": 5000,
-    "images": ["/assets/images/products/board-medium.jpg"],
-    "description": "Hand-finished end-grain hardwood cutting board, laser engraved with the Graftwild mark. Built for the kitchen, the camp, or the fish house. Add a name, a phrase, or leave it clean — each board ships ready to use.",
-    "sizes": [
-      { "label": "12\" × 8\"", "priceAdjust": 0 }
-    ],
+    "id": "cutting-board",
+    "name": "Laser Engraved Cutting Board",
+    "subtitle": "12\" × 8\" · Hardwood",
+    "price": 6500,
+    "images": [],
+    "description": "Hardwood, hand-finished and laser engraved with Florida Keys flora. Built for the kitchen, the camp, or the fish house. Each board is made to order in Big Pine Key. Free personalized engraving included — add your text at checkout.",
+    "dimensions": "12\" × 8\" × 1\"",
+    "material": "End-grain hardwood",
+    "sizes": [{ "label": "12\" × 8\"", "priceAdjust": 0 }],
     "personalization": true,
     "personalizationPrompt": "Engraving text (optional, 40 chars max)",
     "inStock": true,
     "shipsIn": "5–7 business days"
+  },
+  {
+    "id": "board-wax",
+    "name": "Board Wax",
+    "subtitle": "Beeswax & Coconut Oil",
+    "price": 1800,
+    "images": [],
+    "description": "Beeswax and cold-pressed coconut oil. Nothing else. Conditions and protects your board the way nature intended — no petroleum, no fillers, no synthetic fragrance. Made in small batches in the Keys.",
+    "dimensions": "2 oz",
+    "material": "Beeswax, cold-pressed coconut oil",
+    "sizes": [{ "label": "2 oz", "priceAdjust": 0 }],
+    "personalization": false,
+    "inStock": true,
+    "shipsIn": "3–5 business days"
+  },
+  {
+    "id": "coconut-oil",
+    "name": "Cold Pressed Coconut Oil",
+    "subtitle": "Raw · Unrefined · Small Batch",
+    "price": 2400,
+    "images": [],
+    "description": "Pressed from Florida coconuts. Raw, unrefined, and alive. For cooking, skin, or hair. No heat processing, no additives — just coconut oil the way it's supposed to be. Pressed in small batches in Big Pine Key.",
+    "dimensions": "8 fl oz",
+    "material": "100% cold-pressed coconut oil",
+    "sizes": [{ "label": "8 fl oz", "priceAdjust": 0 }],
+    "personalization": false,
+    "inStock": true,
+    "shipsIn": "3–5 business days"
   }
 ]

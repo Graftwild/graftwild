@@ -3,49 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Product — Graft Wild</title>
-  <link rel="stylesheet" href="/assets/style.css" />
+  <title>Product — Graftwild</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --forest: #2C3B2A;
+      --cream:  #F5F0E8;
+      --black:  #1C1F17;
+      --olive:  #6B7C45;
+      --sand:   #C4A882;
+      --bark:   #7D5A3C;
+      --white:  #FFFFFF;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    html { font-size: 16px; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--cream);
+      color: var(--black);
+      min-height: 100vh;
+    }
+
     /* ── Nav ─────────────────────────────────────────────── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
       padding: 1.25rem 2.5rem;
-      background: rgba(19,15,8,0.97);
-      border-bottom: 1px solid var(--border);
+      background: var(--black);
     }
     .nav-logo {
-      font-family: var(--font-heading);
-      font-size: 1.1rem; font-weight: 700;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text); text-decoration: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--cream); text-decoration: none;
     }
     .nav-links { display: flex; gap: 2rem; list-style: none; }
     .nav-links a {
-      font-size: 0.8rem; font-weight: 500;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--text-muted); transition: color 0.2s;
+      font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(245,240,232,0.55); transition: color 0.2s;
       text-decoration: none;
     }
-    .nav-links a:hover { color: var(--gold); }
+    .nav-links a:hover { color: var(--cream); }
 
     /* ── Breadcrumb ──────────────────────────────────────── */
     .breadcrumb {
-      padding: 5.5rem 2.5rem 0;
-      font-size: 0.75rem; letter-spacing: 0.08em;
-      color: var(--text-dim);
+      padding: 5.75rem 2.5rem 0;
+      font-size: 0.72rem; letter-spacing: 0.06em;
+      color: rgba(28,31,23,0.45);
     }
-    .breadcrumb a { color: var(--text-dim); text-decoration: none; }
-    .breadcrumb a:hover { color: var(--gold); }
-    .breadcrumb span { margin: 0 0.5rem; }
+    .breadcrumb a { color: rgba(28,31,23,0.45); text-decoration: none; transition: color 0.2s; }
+    .breadcrumb a:hover { color: var(--olive); }
+    .breadcrumb span { margin: 0 0.45rem; }
 
     /* ── Product layout ──────────────────────────────────── */
     .product-page {
       max-width: 1100px; margin: 0 auto;
-      padding: 2rem 2rem 6rem;
+      padding: 2rem 2rem 7rem;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 4rem;
+      gap: 4.5rem;
       align-items: start;
     }
 
@@ -54,67 +76,70 @@
     .product-main-img {
       width: 100%; aspect-ratio: 4/3;
       object-fit: cover;
-      border-radius: var(--radius-lg);
-      background: var(--black-card);
-      border: 1px solid var(--border);
+      border-radius: 2px;
     }
     .product-img-placeholder {
       width: 100%; aspect-ratio: 4/3;
-      background: linear-gradient(135deg, #1c160c 0%, #241c10 50%, #1a1408 100%);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, #e8e0d0 0%, #ddd5c3 50%, #e6dece 100%);
+      border-radius: 2px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1rem; position: relative; overflow: hidden;
     }
     .product-img-placeholder::before {
       content: '';
       position: absolute; inset: 0;
       background:
-        repeating-linear-gradient(90deg, transparent 0px, transparent 18px, rgba(158,120,50,0.04) 18px, rgba(158,120,50,0.04) 19px),
-        repeating-linear-gradient(0deg,  transparent 0px, transparent 18px, rgba(158,120,50,0.04) 18px, rgba(158,120,50,0.04) 19px);
+        repeating-linear-gradient(90deg, transparent 0px, transparent 22px, rgba(107,124,69,0.06) 22px, rgba(107,124,69,0.06) 23px),
+        repeating-linear-gradient(0deg, transparent 0px, transparent 22px, rgba(107,124,69,0.06) 22px, rgba(107,124,69,0.06) 23px);
     }
-    .product-img-placeholder span {
-      font-size: 0.7rem; font-weight: 600;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text-dim); position: relative; z-index: 1;
+    .placeholder-svg { opacity: 0.25; position: relative; z-index: 1; }
+    .placeholder-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: 0.85rem;
+      color: rgba(28,31,23,0.45);
+      position: relative; z-index: 1; letter-spacing: 0.05em;
     }
 
     /* ── Info panel ──────────────────────────────────────── */
-    .product-info { padding-top: 0.5rem; }
+    .product-info { padding-top: 0.75rem; }
     .product-eyebrow {
-      font-size: 0.7rem; font-weight: 500;
+      font-size: 0.68rem; font-weight: 500;
       letter-spacing: 0.3em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 0.75rem;
+      color: var(--olive); margin-bottom: 0.85rem;
     }
     .product-name {
-      font-family: var(--font-heading);
-      font-size: clamp(1.8rem, 3vw, 2.5rem);
-      font-weight: 900; line-height: 1.05;
-      color: var(--text); margin-bottom: 0.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 600; line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--black); margin-bottom: 0.5rem;
     }
     .product-subtitle {
-      font-size: 0.8rem; font-weight: 500;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--text-dim); margin-bottom: 1.5rem;
+      font-size: 0.75rem; font-weight: 400;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(28,31,23,0.45); margin-bottom: 1.75rem;
     }
     .product-price {
-      font-size: 2rem; font-weight: 700;
-      color: var(--gold-pale); margin-bottom: 0.4rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.25rem; font-weight: 600;
+      color: var(--black); margin-bottom: 0.35rem;
+      letter-spacing: -0.01em;
     }
     .product-ships {
-      font-size: 0.75rem; color: var(--text-dim);
-      letter-spacing: 0.05em; margin-bottom: 2rem;
+      font-size: 0.72rem; color: rgba(28,31,23,0.45);
+      letter-spacing: 0.06em; margin-bottom: 2rem;
     }
     .product-divider {
-      border: none; border-top: 1px solid var(--border);
+      border: none; border-top: 1px solid rgba(28,31,23,0.1);
       margin: 1.75rem 0;
     }
 
     /* ── Options ─────────────────────────────────────────── */
     .option-label {
-      font-size: 0.72rem; font-weight: 600;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--text-muted); margin-bottom: 0.6rem;
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(28,31,23,0.5); margin-bottom: 0.65rem;
       display: block;
     }
     .size-options {
@@ -122,148 +147,156 @@
       margin-bottom: 1.5rem;
     }
     .size-btn {
-      padding: 0.55rem 1.1rem;
-      background: var(--black-soft);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-family: var(--font-body);
+      padding: 0.55rem 1.15rem;
+      background: transparent;
+      border: 1px solid rgba(28,31,23,0.2);
+      color: rgba(28,31,23,0.6);
+      font-family: 'Inter', sans-serif;
       font-size: 0.78rem; font-weight: 500;
-      border-radius: var(--radius);
-      cursor: pointer; transition: all 0.15s;
+      cursor: pointer;
+      transition: border-color 0.18s, color 0.18s, background 0.18s;
     }
-    .size-btn:hover { border-color: var(--gold-light); color: var(--text); }
+    .size-btn:hover { border-color: var(--olive); color: var(--olive); }
     .size-btn.selected {
-      border-color: var(--gold); color: var(--gold);
-      background: rgba(158,120,50,0.08);
+      border-color: var(--olive); color: var(--olive);
+      background: rgba(107,124,69,0.07);
     }
 
     .engraving-wrap { margin-bottom: 1.5rem; }
     .engraving-input {
-      width: 100%; padding: 0.75rem 1rem;
-      background: var(--black-soft);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text);
-      font-family: var(--font-body); font-size: 0.95rem;
+      width: 100%; padding: 0.8rem 1rem;
+      background: rgba(255,255,255,0.6);
+      border: 1px solid rgba(28,31,23,0.2);
+      color: var(--black);
+      font-family: 'Inter', sans-serif; font-size: 0.92rem;
       outline: none; transition: border-color 0.2s;
       box-sizing: border-box;
     }
-    .engraving-input:focus { border-color: var(--gold); }
+    .engraving-input:focus { border-color: var(--olive); }
     .engraving-hint {
-      font-size: 0.72rem; color: var(--text-dim);
+      font-size: 0.7rem; color: rgba(28,31,23,0.4);
       margin-top: 0.4rem; text-align: right;
     }
 
     .qty-wrap {
-      display: flex; align-items: center; gap: 0.75rem;
+      display: flex; align-items: center; gap: 0.85rem;
       margin-bottom: 1.75rem;
     }
     .qty-btn {
       width: 2.25rem; height: 2.25rem;
-      background: var(--black-soft);
-      border: 1px solid var(--border);
-      color: var(--text); font-size: 1.1rem;
-      border-radius: var(--radius); cursor: pointer;
+      background: transparent;
+      border: 1px solid rgba(28,31,23,0.2);
+      color: var(--black); font-size: 1.1rem;
+      cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      transition: border-color 0.15s;
+      transition: border-color 0.18s;
     }
-    .qty-btn:hover { border-color: var(--gold); }
+    .qty-btn:hover { border-color: var(--olive); }
     .qty-display {
       font-size: 1rem; font-weight: 600;
-      color: var(--text); min-width: 1.5rem; text-align: center;
+      color: var(--black); min-width: 1.5rem; text-align: center;
     }
 
     .btn-add-cart {
-      width: 100%; padding: 1rem;
-      background: var(--gold);
-      color: var(--black);
-      border: none; border-radius: var(--radius);
-      font-family: var(--font-body);
-      font-size: 0.82rem; font-weight: 700;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      cursor: pointer; transition: background 0.2s;
+      width: 100%; padding: 1.05rem;
+      background: var(--forest);
+      color: var(--cream);
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
     }
-    .btn-add-cart:hover { background: var(--gold-light); }
-    .btn-add-cart:disabled { opacity: 0.5; cursor: default; }
+    .btn-add-cart:hover { background: #1a2418; }
+    .btn-add-cart:disabled { opacity: 0.55; cursor: default; }
     .add-feedback {
-      text-align: center; margin-top: 0.75rem;
-      font-size: 0.78rem; color: var(--green-light);
-      letter-spacing: 0.08em; min-height: 1.2em;
+      text-align: center; margin-top: 0.7rem;
+      font-size: 0.75rem; color: var(--olive);
+      letter-spacing: 0.06em; min-height: 1.2em;
+      font-style: italic;
     }
 
     /* ── Description ─────────────────────────────────────── */
     .product-description {
-      font-size: 0.9rem; line-height: 1.8;
-      color: var(--text-muted); margin-bottom: 1.5rem;
+      font-size: 0.92rem; line-height: 1.8;
+      color: rgba(28,31,23,0.7); margin-bottom: 1.5rem;
     }
 
-    /* ── Care / details strip ────────────────────────────── */
+    /* ── Product details strip ───────────────────────────── */
     .product-details {
-      display: flex; flex-direction: column; gap: 0.5rem;
+      display: flex; flex-direction: column; gap: 0.55rem;
       margin-top: 0.5rem;
     }
     .detail-row {
-      display: flex; gap: 0.75rem; align-items: baseline;
-      font-size: 0.8rem; color: var(--text-muted);
+      display: flex; gap: 0.85rem; align-items: baseline;
+      font-size: 0.78rem;
     }
+    .detail-label {
+      font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      font-size: 0.68rem; color: rgba(28,31,23,0.45); min-width: 5rem; flex-shrink: 0;
+    }
+    .detail-value { color: rgba(28,31,23,0.7); }
     .detail-row::before {
-      content: '—'; color: var(--gold); flex-shrink: 0;
+      content: '—'; color: var(--olive); flex-shrink: 0;
     }
 
     /* ── Loading / error ─────────────────────────────────── */
     .page-msg {
       padding: 8rem 2rem; text-align: center;
-      color: var(--text-muted); font-size: 0.9rem;
+      color: rgba(28,31,23,0.45); font-size: 0.9rem;
     }
+    .page-msg a { color: var(--olive); }
 
     /* ── Footer ──────────────────────────────────────────── */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem 2.5rem;
+      background: var(--black);
+      padding: 2.25rem 2.5rem;
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 1rem;
     }
     .footer-logo {
-      font-family: var(--font-heading); font-size: 0.95rem;
-      font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text-dim);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(245,240,232,0.4);
     }
-    footer p { font-size: 0.75rem; color: var(--text-dim); letter-spacing: 0.05em; }
+    footer p { font-size: 0.73rem; color: rgba(245,240,232,0.35); letter-spacing: 0.04em; }
+    footer a { color: rgba(245,240,232,0.35); text-decoration: none; }
+    footer a:hover { color: var(--cream); }
 
     @media (max-width: 768px) {
       nav { padding: 1rem 1.25rem; }
       .nav-links { gap: 1.25rem; }
       .breadcrumb { padding: 5rem 1.25rem 0; }
-      .product-page { grid-template-columns: 1fr; gap: 2rem; padding: 1.5rem 1.25rem 4rem; }
+      .product-page { grid-template-columns: 1fr; gap: 2rem; padding: 1.5rem 1.25rem 4.5rem; }
+      footer { padding: 2rem 1.25rem; }
     }
   </style>
 </head>
 <body>
 
 <nav>
-  <a class="nav-logo" href="/">Graft Wild</a>
+  <a class="nav-logo" href="/">Graftwild</a>
   <ul class="nav-links">
     <li><a href="/">Home</a></li>
-    <li><a href="/shop">Shop</a></li>
-    <li><a href="https://www.instagram.com/stryder.g/" target="_blank" rel="noopener">Instagram</a></li>
-    <li><a href="/cart">Cart <span id="cart-count" style="color:var(--gold)"></span></a></li>
+    <li><a href="/cart">Cart <span id="cart-count"></span></a></li>
   </ul>
 </nav>
 
 <div class="breadcrumb">
-  <a href="/">Home</a><span>›</span><a href="/shop">Shop</a><span>›</span><span id="breadcrumb-name">Loading...</span>
+  <a href="/">Home</a><span>›</span><span id="breadcrumb-name">Loading...</span>
 </div>
 
 <div id="page-content"><div class="page-msg">Loading...</div></div>
 
 <footer>
-  <span class="footer-logo">Graft Wild</span>
-  <p>© 2026 Graft Wild. Florida Keys.</p>
-  <p><a href="mailto:partnerships@graftwild.com" style="color:var(--text-dim)">partnerships@graftwild.com</a></p>
+  <span class="footer-logo">Graftwild</span>
+  <p>© 2026 Graftwild · Big Pine Key, Florida Keys</p>
+  <p><a href="mailto:partnerships@graftwild.com">partnerships@graftwild.com</a></p>
 </footer>
 
 <script>
-  // ── Helpers ─────────────────────────────────────────────
   function getCart() {
     try { return JSON.parse(localStorage.getItem('gw_cart') || '[]'); } catch { return []; }
   }
@@ -276,7 +309,6 @@
   }
   updateCartBadge();
 
-  // ── State ────────────────────────────────────────────────
   let product = null;
   let selectedSizeIndex = 0;
   let qty = 1;
@@ -292,15 +324,23 @@
     if (el) el.textContent = formatPrice(currentPrice());
   }
 
-  // ── Build page ───────────────────────────────────────────
   function renderProduct(p) {
     product = p;
-    document.title = `${p.name} — Graft Wild`;
+    document.title = `${p.name} — Graftwild`;
     document.getElementById('breadcrumb-name').textContent = p.name;
 
     const imgEl = p.images?.[0]
       ? `<img class="product-main-img" src="${p.images[0]}" alt="${p.name}" />`
-      : `<div class="product-img-placeholder"><span>Photo Coming Soon</span></div>`;
+      : `<div class="product-img-placeholder">
+           <svg class="placeholder-svg" width="64" height="64" viewBox="0 0 48 48" fill="none">
+             <rect x="4" y="10" width="40" height="28" rx="1" stroke="#2C3B2A" stroke-width="1.5" fill="none"/>
+             <line x1="4" y1="18" x2="44" y2="18" stroke="#2C3B2A" stroke-width="0.75" opacity="0.5"/>
+             <line x1="4" y1="24" x2="44" y2="24" stroke="#2C3B2A" stroke-width="0.75" opacity="0.35"/>
+             <line x1="4" y1="30" x2="44" y2="30" stroke="#2C3B2A" stroke-width="0.75" opacity="0.5"/>
+             <circle cx="38" cy="14" r="2" stroke="#2C3B2A" stroke-width="1" fill="none" opacity="0.5"/>
+           </svg>
+           <span class="placeholder-text">Photo coming soon</span>
+         </div>`;
 
     const sizesHtml = p.sizes && p.sizes.length > 1
       ? `<label class="option-label">Size</label>
@@ -320,11 +360,23 @@
          </div>`
       : '';
 
+    const detailsHtml = [
+      p.dimensions ? { label: 'Size', value: p.dimensions } : null,
+      p.material   ? { label: 'Material', value: p.material } : null,
+    ].filter(Boolean).map(d =>
+      `<div class="detail-row">
+         <span class="detail-label">${d.label}</span>
+         <span class="detail-value">${d.value}</span>
+       </div>`
+    ).join('');
+
+    const eyebrow = p.personalization ? 'Handcrafted · Free Engraving' : 'Handcrafted · Small Batch';
+
     document.getElementById('page-content').innerHTML = `
       <div class="product-page">
         <div class="product-gallery">${imgEl}</div>
         <div class="product-info">
-          <p class="product-eyebrow">Handcrafted · Laser Engraved</p>
+          <p class="product-eyebrow">${eyebrow}</p>
           <h1 class="product-name">${p.name}</h1>
           <p class="product-subtitle">${p.subtitle}</p>
           <div class="product-price" id="product-price">${formatPrice(currentPrice())}</div>
@@ -342,12 +394,7 @@
           <p class="add-feedback" id="add-feedback"></p>
           <hr class="product-divider" />
           <p class="product-description">${p.description}</p>
-          <div class="product-details">
-            <div class="detail-row">End-grain hardwood construction</div>
-            <div class="detail-row">Laser engraved — permanent, food-safe</div>
-            <div class="detail-row">Hand wash only, oil occasionally with mineral oil</div>
-            <div class="detail-row">Each board is unique — grain varies slightly</div>
-          </div>
+          ${detailsHtml ? `<div class="product-details">${detailsHtml}</div>` : ''}
         </div>
       </div>`;
 
@@ -355,7 +402,6 @@
   }
 
   function attachListeners(p) {
-    // Size buttons
     document.getElementById('size-options')?.addEventListener('click', e => {
       const btn = e.target.closest('.size-btn');
       if (!btn) return;
@@ -365,13 +411,11 @@
       updatePrice();
     });
 
-    // Engraving counter
     const engInput = document.getElementById('engraving-input');
     engInput?.addEventListener('input', () => {
       document.getElementById('engraving-count').textContent = engInput.value.length;
     });
 
-    // Qty
     document.getElementById('qty-down').addEventListener('click', () => {
       if (qty > 1) { qty--; document.getElementById('qty-display').textContent = qty; }
     });
@@ -379,13 +423,11 @@
       if (qty < 10) { qty++; document.getElementById('qty-display').textContent = qty; }
     });
 
-    // Add to cart
     document.getElementById('btn-add-cart').addEventListener('click', () => {
       const engraving = document.getElementById('engraving-input')?.value.trim() || '';
       const size = p.sizes?.[selectedSizeIndex]?.label || '';
       const cart = getCart();
 
-      // Match existing item (same product + size + engraving)
       const existing = cart.find(i =>
         i.productId === p.id &&
         i.sizeIndex === selectedSizeIndex &&
@@ -396,21 +438,21 @@
         existing.qty = (existing.qty || 1) + qty;
       } else {
         cart.push({
-          productId:  p.id,
-          name:       p.name,
-          subtitle:   p.subtitle,
+          productId: p.id,
+          name:      p.name,
+          subtitle:  p.subtitle,
           size,
-          sizeIndex:  selectedSizeIndex,
+          sizeIndex: selectedSizeIndex,
           engraving,
           qty,
-          price:      currentPrice(),
+          price:     currentPrice(),
         });
       }
 
       saveCart(cart);
       updateCartBadge();
 
-      const fb = document.getElementById('add-feedback');
+      const fb  = document.getElementById('add-feedback');
       const btn = document.getElementById('btn-add-cart');
       btn.disabled = true;
       btn.textContent = '✓ Added to Cart';
@@ -422,14 +464,13 @@
     });
   }
 
-  // ── Load product ─────────────────────────────────────────
   async function init() {
     const params = new URLSearchParams(location.search);
     const id = params.get('id');
 
     if (!id) {
       document.getElementById('page-content').innerHTML =
-        '<div class="page-msg">No product specified. <a href="/shop" style="color:var(--gold)">Back to shop →</a></div>';
+        '<div class="page-msg">No product specified. <a href="/">Back to home →</a></div>';
       return;
     }
 
@@ -441,7 +482,7 @@
       renderProduct(p);
     } catch {
       document.getElementById('page-content').innerHTML =
-        '<div class="page-msg">Product not found. <a href="/shop" style="color:var(--gold)">Back to shop →</a></div>';
+        '<div class="page-msg">Product not found. <a href="/">Back to home →</a></div>';
     }
   }
 
