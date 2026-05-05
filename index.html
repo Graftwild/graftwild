@@ -473,16 +473,6 @@
       font-size: 0.8rem; font-weight: 300; line-height: 1.75;
       color: rgba(28,31,23,0.52); margin-bottom: 2rem;
     }
-    .contact-code-pill {
-      display: inline-block;
-      font-size: 0.65rem; font-weight: 500;
-      letter-spacing: 0.32em; text-transform: uppercase;
-      color: var(--forest);
-      border: 1px solid rgba(44,59,42,0.45);
-      background: rgba(44,59,42,0.05);
-      padding: 0.65rem 1.75rem;
-      margin-bottom: 2.75rem;
-    }
     .email-form {
       display: flex; max-width: 420px; margin: 0 auto 1.25rem;
     }
@@ -514,6 +504,18 @@
     .email-btn:hover { background: var(--black); border-color: var(--black); }
     .email-btn:focus-visible { outline: 2px solid var(--forest); outline-offset: 2px; }
     .email-btn:active { opacity: 0.75; }
+    .signup-success {
+      display: none;
+      margin-bottom: 1.5rem;
+    }
+    .signup-success.visible {
+      display: block;
+    }
+    .signup-success-msg {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem; font-weight: 400; font-style: italic;
+      color: var(--forest);
+    }
     .contact-note {
       font-size: 0.62rem; font-weight: 300;
       color: rgba(28,31,23,0.32);
@@ -631,7 +633,6 @@
     </div>
 
     <div class="hero-scroll" aria-hidden="true">
-      <span class="hero-scroll-label">Scroll</span>
       <div class="hero-scroll-line"></div>
     </div>
   </section>
@@ -798,10 +799,9 @@
     <div class="contact-inner">
       <p class="label contact-label">Join the Wild Side</p>
       <h2 class="contact-heading reveal">Get 10% off<br><em>your first order.</em></h2>
-      <p class="contact-sub reveal">Sign up and we'll send you the code. No weekly blasts, no fluff — just new drops, field notes from Big Pine Key, and things worth knowing.</p>
-      <span class="contact-code-pill reveal">Use code WILD10</span>
+      <p class="contact-sub reveal">Drop your email and we'll send your discount code straight to your inbox. No weekly blasts, no fluff — just new drops and field notes from Big Pine Key.</p>
 
-      <form class="email-form reveal" action="#" method="post" novalidate>
+      <form class="email-form reveal" id="signup-form" action="#" method="post" novalidate>
         <label for="email" class="sr-only">Email address</label>
         <input
           type="email" id="email"
@@ -811,6 +811,10 @@
         >
         <button type="submit" class="email-btn">Join</button>
       </form>
+
+      <div class="signup-success reveal" id="signup-success" aria-live="polite">
+        <p class="signup-success-msg">Check your inbox — your code is on its way.</p>
+      </div>
 
       <p class="contact-note reveal">
         <a href="mailto:partnerships@graftwild.com">partnerships@graftwild.com</a>
@@ -880,6 +884,16 @@
         end: 'bottom top',
         scrub: 1.5,
       }
+    });
+
+    /* ── Email signup ── */
+    document.getElementById('signup-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = this.querySelector('input[type="email"]').value;
+      if (!email) return;
+      this.style.display = 'none';
+      document.getElementById('signup-success').classList.add('visible');
+      // TODO: POST email to your sending service (Mailchimp, ConvertKit, nodemailer, etc.)
     });
 
     /* ── Hero flora parallax ── */
